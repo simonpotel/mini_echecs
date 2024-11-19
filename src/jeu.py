@@ -14,8 +14,9 @@ class Jeu:
     def __init__(self, taille_plateau):
         self.plateau = Plateau(taille_plateau)
         self.joueurs = [Joueur(), Joueur()]
+        self.joueur_actuel = 0
         self.root = tk.Tk()
-        self.root.title("mini_echecs")
+        self.root.title("Mini Echecs: Jeu")
         self.root.geometry("800x800")
         self.canvas_width = 600
         self.canvas_height = 600
@@ -24,11 +25,14 @@ class Jeu:
             self.root, width=self.canvas_width, height=self.canvas_height)
         self.label.pack()
         self.canvas.pack()
-        self.label = tk.Label(self.root, text="Joueur 1", font=("Helvetica, 20"))
-        self.label.pack()
+        self.label_joueur = tk.Label(self.root, text="Joueur 1", font=("Helvetica, 20"))
+        self.label_joueur.pack()
         self.draw_jeu()
 
     def draw_jeu(self):
+        self.label.config(text="À vous de jouer !")
+        self.label_joueur.config(text=f"Joueur {self.joueur_actuel + 1}")
+
         taille = self.plateau.get_taille()
         largeur_cellule = self.canvas_width / taille
         hauteur_cellule = self.canvas_height / taille
@@ -68,17 +72,19 @@ class Jeu:
                         oval, '<Button-1>', lambda event, i=i, j=j: self.click_pion(i, j))
 
     def click_pion(self, i, j):
+        if self.joueur_actuel != self.plateau.get_plateau()[i][j][1]:
+            self.label.config(text="Ce n'est pas votre pion.")
+            return
+        else:
+            self.label.config(text="Votre pion a disparu !.!")
         self.plateau.get_plateau()[i][j] = (None, None)
-        self.update_plateau()
+        self.joueur_actuel = 0 if self.joueur_actuel == 1 else 1
+        self.update_game()
 
-    def update_plateau(self):
+    def update_game(self):
         self.canvas.delete("all")
         self.draw_jeu()
 
     def run(self):
-        victoire = False 
-        joueur_actuel = 0
-        while not victoire: 
-            self.label.config(text=f"Joueur {joueur_actuel + 1}")
-            self.update_plateau()
-            self.root.mainloop()
+        self.update_game()
+        self.root.mainloop()

@@ -11,7 +11,7 @@ class PreConfig:
         
     def charger_menu_configuration(self):
         self.root = tk.Tk()
-        self.root.title("Mini Echecs: Chargement")
+        self.root.title("Mini Echecs: PreConfig")
 
         self.label_taille = tk.Label(self.root, text="Taille du plateau (6-12):")
         self.label_taille.pack(pady=10)
