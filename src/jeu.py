@@ -107,6 +107,32 @@ class Jeu:
         self.canvas.delete("all")
         self.draw_jeu()
 
+    
+    
+    def check_victoire(self):
+        plateau = self.plateau.get_plateau()
+        taille = self.plateau.get_taille()
+        pions_joueur_1 = 0
+        pions_joueur_2 = 0
+
+        for i in range(taille):
+            for j in range(taille):
+                piece, joueur = plateau[i][j]
+                if piece is not None:
+                    if joueur == 0:
+                        pions_joueur_1 += 1
+                    else:
+                        pions_joueur_2 += 1
+
+        if pions_joueur_1 < 3:
+            print("Joueur 2 a gagné")
+            return True
+        elif pions_joueur_2 < 3:
+            print("Joueur 1 a gagné")
+            return True
+        return False
+            
+
     def run(self):
         self.update_game()
         self.root.mainloop()
