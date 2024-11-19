@@ -26,6 +26,11 @@ class Render:
         cell_width = self.canvas_width / taille
         cell_height = self.canvas_height / taille
 
+        for i in range(taille + 1):
+            self.canvas.create_line(0, i * cell_height, self.canvas_width,
+                                    i * cell_height)
+            self.canvas.create_line(i * cell_width, 0, i * cell_width, self.canvas_height)
+        
         for i in range(taille):
             for j in range(taille):
                 piece, joueur = self.plateau.get_plateau()[i][j]
@@ -38,7 +43,8 @@ class Render:
                     y0 = i * cell_height
                     x1 = x0 + cell_width
                     y1 = y0 + cell_height
-                    self.canvas.create_oval(x0, y0, x1, y1, fill=color)
+                    self.canvas.create_oval(x0, y0, x1, y1, fill=color, margin=5)
+                    
 
     def run(self):
         self.root.mainloop()
