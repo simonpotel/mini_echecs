@@ -13,8 +13,8 @@ ref_couleurs = {
 
 class Jeu:
     def __init__(self, taille_plateau):
-        self.plateau = Plateau(taille_plateau)
         self.joueurs = [Joueur(), Joueur()]
+        self.plateau = Plateau(taille_plateau, self.joueurs)
         # (tour, (pion_selectioné_x, pion_selectioné_y))
         self.tour_joueur = [0, (None, None)]
         self.root = tk.Tk()
@@ -78,13 +78,15 @@ class Jeu:
                     if (i, j) == self.tour_joueur[1]:
                         self.canvas.create_oval(x - 5, y - 5, w + 5, h + 5, outline="green", width=2)
                     
+    
     def move_pion(self, i, j):
         plateau = self.plateau.get_plateau()
         plateau[i][j] = plateau[self.tour_joueur[1][0]][self.tour_joueur[1][1]]
         plateau[self.tour_joueur[1][0]][self.tour_joueur[1][1]] = (None, None)
 
     def click_pion(self, i, j):
-        case = self.plateau.get_plateau()[i][j]
+        plateau = self.plateau.get_plateau()
+        case = plateau[i][j]
         if case[0] is None:  # case vide (aucun pion)
             if self.tour_joueur[1] == (None, None):  # aucun pion selectionné
                 self.label.config(
@@ -95,14 +97,19 @@ class Jeu:
                 
                 # bouger le pion du joueur vers cette case vide
                 self.move_pion(i, j)
-                
-                if i != self.tour_joueur[1][0] and j != self.tour_joueur[1][1]:
-                    # dans le sens des aiguilles d'une montre (haut gauche, haut droit, bas droit, bas gauche)
-                    rectangle_sommets = [(None, None), (None, None), (None, None), (None, None)]    
-                    rectangle_sommets[0] = (i, j)
-                    rectangle_sommets[1] = (i, self.tour_joueur[1][1])
-                    rectangle_sommets[2] = (self.tour_joueur[1][0], self.tour_joueur[1][1])
-                    rectangle_sommets[3] = (self.tour_joueur[1][0], j)            
+                reine_coords = self.joueurs[self.tour_joueur[0]].get_coordonnees_reine()
+                if i != reine_coords[0] and j != reine_coords[1]:
+                    rectangle_sommets = [
+                        (i, j),
+                        (i, reine_coords[1]),
+                        reine_coords,
+                        (reine_coords[0], j)
+                    ]
+                    for x, y in [rectangle_sommets[1], rectangle_sommets[3]]:
+                        if plateau[x][y][1] != self.tour_joueur[0] and plateau[x][y][1] is not None:
+                            plateau[x][y] = (None, None)
+                    
+                     
                 if self.check_victoire():
                     self.update_game()
                     self.label.config(text="Partie terminée")
@@ -115,7 +122,13 @@ class Jeu:
                 return
             else:  # la case a un pion qui appartient au joueur
                 # on remplace l'ancienne selection par la nouvelle
-                pion_type_msg = "votre reine" if case[0] == 1 else "une tour"
+                match case[0]:
+                    case 1: # reine 
+                        pion_type_msg = "votre reine"
+                        self.joueurs[self.tour_joueur[0]].set_coordonnees_reine((i, j))
+                    case 2: # tour
+                        pion_type_msg = "une tour"
+                
                 self.label.config(text=f"Vous avez sélectionné {pion_type_msg} ({i}, {j})")
                 self.tour_joueur[1] = (i, j)
                 self.update_game()
