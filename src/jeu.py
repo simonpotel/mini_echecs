@@ -17,11 +17,19 @@ class Jeu:
         self.joueurs = [Joueur(), Joueur()]  # joueur 1 et joueur 2
         self.root = tk.Tk()
         self.root.title = ("mini_echecs")
-        self.canvas_width = 800
-        self.canvas_height = 800
+        self.canvas_width = 600
+        self.canvas_height = 600
         self.canvas = tk.Canvas(
             self.root, width=self.canvas_width, height=self.canvas_height)
         self.canvas.pack()
+        self.root.grid_columnconfigure(0, weight=1)
+        self.root.grid_rowconfigure(0, weight=1)
+        self.root.grid_columnconfigure(1, weight=1)
+        self.root.grid_rowconfigure(1, weight=1)
+        self.canvas.grid(row=0, column=0, columnspan=2, rowspan=2)
+        self.canvas.grid(row=1, column=0)
+        self.label = tk.Label(self.root, text="Joueur 1")  # Define self.label
+        self.label.pack()
         self.draw_plateau()
 
     def draw_plateau(self):
