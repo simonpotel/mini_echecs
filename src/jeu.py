@@ -2,55 +2,83 @@ from loguru import logger
 import tkinter as tk
 from src.joueur import Joueur
 from src.plateau import Plateau
-from src.render import Render
-from tkinter import messagebox
+
+ref_couleurs = {
+    "reine_joueur_1": "purple",
+    "tours_joueur_1": "blue",
+    "reine_joueur_2": "orange",
+    "tours_joueur_2": "red"
+}
 
 class Jeu:
-    def __init__(self):
-        self.root_config = None
-        self.label_taille = None
-        self.entry_taille = None
-        self.bouton_charger = None
-        
-        self.plateau = None
-        self.joueurs = None
-        self.render = None 
-        
-        self.charger_menu_configuration()
-        
-    def charger_menu_configuration(self):
-        self.root_config = tk.Tk()
-        self.root_config.title("Mini Echecs: Chargement")
+    def __init__(self, taille_plateau):
+        self.plateau = Plateau(taille_plateau)
+        self.joueurs = [Joueur(), Joueur()]
+        self.root = tk.Tk()
+        self.root.title("mini_echecs")
+        self.root.geometry("800x800")
+        self.canvas_width = 600
+        self.canvas_height = 600
+        self.label = tk.Label(self.root, text="Mini Echecs")
+        self.canvas = tk.Canvas(
+            self.root, width=self.canvas_width, height=self.canvas_height)
+        self.label.pack()
+        self.canvas.pack()
+        self.label = tk.Label(self.root, text="Joueur 1", font=("Helvetica, 20"))
+        self.label.pack()
+        self.draw_jeu()
 
-        self.label_taille = tk.Label(self.root_config, text="Taille du plateau (6-12):")
-        self.label_taille.pack(pady=10)
+    def draw_jeu(self):
+        taille = self.plateau.get_taille()
+        largeur_cellule = self.canvas_width / taille
+        hauteur_cellule = self.canvas_height / taille
+        margin = 10
 
-        self.entry_taille = tk.Entry(self.root_config)
-        self.entry_taille.insert(0, "8")
-        self.entry_taille.pack(pady=10)
+        largeur_bordure = 2.5
 
-        self.bouton_charger = tk.Button(self.root_config, text="Charger", command=self.charger_partie)
-        self.bouton_charger.pack(pady=10)
+        for i in range(taille + 1):
+            self.canvas.create_line(largeur_bordure, i * hauteur_cellule, self.canvas_width,
+                                    i * hauteur_cellule)  # lignes horizontales
+            self.canvas.create_line(
+                i * largeur_cellule, largeur_bordure, i * largeur_cellule, self.canvas_height + 0.25)  # lignes verticales
 
-        self.root_config.mainloop()
+        # ligne gauche verticale
+        self.canvas.create_line(
+            largeur_bordure, largeur_bordure, largeur_bordure, self.canvas_height)
+        # ligne haute horizontale
+        self.canvas.create_line(
+            largeur_bordure, largeur_bordure, self.canvas_width, largeur_bordure)
 
-    def charger_partie(self):
-        try:
-            taille_plateau = int(self.entry_taille.get())
-            if 6 <= taille_plateau <= 12:
-                self.root_config.destroy()
-                self.plateau = Plateau(taille_plateau)
-                self.joueurs = [Joueur(), Joueur()]  # joueur 1 et joueur 2
-                self.render = Render(self.plateau)
-                self.run()
-            else:
-                messagebox.showerror(
-                    "Erreur", "La taille du plateau doit être entre 6 et 12.")
-        except ValueError:
-            messagebox.showerror("Erreur", "Veuillez entrer un nombre valide.")
+        for i in range(taille):
+            for j in range(taille):
+                piece, joueur = self.plateau.get_plateau()[i][j]
+                if piece is not None:
+                    if piece == 1:  # reine
+                        color = ref_couleurs[f"reine_joueur_{joueur + 1}"]
+                    elif piece == 2:  # tour
+                        color = ref_couleurs[f"tours_joueur_{joueur + 1}"]
+                    x = j * largeur_cellule + margin
+                    y = i * hauteur_cellule + margin
+                    w = (j + 1) * largeur_cellule - margin
+                    h = (i + 1) * hauteur_cellule - margin
+                    # dessiner le pion sur le canvas
+                    oval = self.canvas.create_oval(x, y, w, h, fill=color)
+                    # event click sur un pion
+                    self.canvas.tag_bind(
+                        oval, '<Button-1>', lambda event, i=i, j=j: self.click_pion(i, j))
+
+    def click_pion(self, i, j):
+        self.plateau.get_plateau()[i][j] = (None, None)
+        self.update_plateau()
+
+    def update_plateau(self):
+        self.canvas.delete("all")
+        self.draw_jeu()
 
     def run(self):
-        joueur_courant = 0
-        self.render.update_joueur(joueur_courant)
-        self.render.run()
-        print('run')
+        victoire = False 
+        joueur_actuel = 0
+        while not victoire: 
+            self.label.config(text=f"Joueur {joueur_actuel + 1}")
+            self.update_plateau()
+            self.root.mainloop()
