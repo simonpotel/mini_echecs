@@ -1,6 +1,5 @@
 import tkinter as tk
 
-
 ref_couleurs = {
     "reine_joueur_1": "purple",
     "tours_joueur_1": "blue",
@@ -42,9 +41,11 @@ class Render:
 
 
         # ligne gauche verticale
-        self.canvas.create_line(largeur_bordure, largeur_bordure, largeur_bordure, self.canvas_height)
+        self.canvas.create_line(
+            largeur_bordure, largeur_bordure, largeur_bordure, self.canvas_height)
         # ligne haute horizontale
-        self.canvas.create_line(largeur_bordure, largeur_bordure, self.canvas_width, largeur_bordure)
+        self.canvas.create_line(
+            largeur_bordure, largeur_bordure, self.canvas_width, largeur_bordure)
 
         for i in range(taille):
             for j in range(taille):
@@ -58,7 +59,19 @@ class Render:
                     y = i * hauteur_cellule + margin
                     w = (j + 1) * largeur_cellule - margin
                     h = (i + 1) * hauteur_cellule - margin
-                    self.canvas.create_oval(x, y, w, h, fill=color)
+                    # dessiner le pion sur le canvas
+                    oval = self.canvas.create_oval(x, y, w, h, fill=color)
+                    # event click sur un pion
+                    self.canvas.tag_bind(
+                        oval, '<Button-1>', lambda event, i=i, j=j: self.click_pion(i, j))
+
+    def click_pion(self, i, j):
+        self.plateau.get_plateau()[i][j] = (None, None)
+        self.update_plateau()
+
+    def update_plateau(self):
+        self.canvas.delete("all")
+        self.draw_plateau()
 
     def run(self):
         self.root.mainloop()
