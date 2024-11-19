@@ -105,6 +105,8 @@ class Jeu:
                 return
             else:  # la case a un pion qui appartient au joueur
                 # on remplace l'ancienne selection par la nouvelle
+                pion_type_msg = "votre reine" if case[0] == 1 else "une tour"
+                self.label.config(text=f"Vous avez sélectionné {pion_type_msg} ({i}, {j})")
                 self.tour_joueur[1] = (i, j)
                 self.update_game()
                 return
