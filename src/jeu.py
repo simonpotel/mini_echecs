@@ -22,10 +22,9 @@ class Jeu:
         self.root.geometry("800x800")
         self.canvas_width = 600
         self.canvas_height = 600
-        self.label = tk.Label(self.root, text="Mini Echecs")
+        self.label = tk.Label(self.root, text="À vous de jouer :", font=("Roboto, 15"))
         self.label.pack(pady=(10, 0))  # Ajouter une marge en haut
-        self.label_joueur = tk.Label(
-            self.root, text="Joueur 1", font=("Helvetica, 20"))
+        self.label_joueur = tk.Label(self.root, text="Joueur 1", font=("Roboto, 20"))
         self.label_joueur.pack(pady=(0, 10))  # Ajouter une marge en bas
         self.canvas = tk.Canvas(
             self.root, width=self.canvas_width, height=self.canvas_height)
@@ -33,7 +32,6 @@ class Jeu:
         self.draw_jeu()
 
     def draw_jeu(self):
-        self.label.config(text="À vous de jouer !", font=("Helvetica, 15"))
         self.label_joueur.config(text=f"Joueur {self.tour_joueur[0] + 1}")
 
         taille = self.plateau.get_taille()
@@ -104,15 +102,15 @@ class Jeu:
                 return
             else:  # la case a un pion qui appartient au joueur
                 # on remplace l'ancienne selection par la nouvelle
-                self.label.config(
-                    text=f"Vous avez sélectionné le pion {i}, {j}")
                 self.tour_joueur[1] = (i, j)
+                self.update_game()
                 return
 
         # réinitialiser la case selectionnée pour le prochain joueur
         self.tour_joueur[1] = (None, None)
         # définition du tour du joueur suivant
         self.tour_joueur[0] = 0 if self.tour_joueur[0] == 1 else 1
+        self.label.config(text="À vous de jouer :")
         self.update_game()  # mettre à jour le jeu tkinter
 
     def update_game(self):
