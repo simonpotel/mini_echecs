@@ -1,6 +1,7 @@
 from loguru import logger
 import tkinter as tk
 from src.joueur import Joueur
+from src.plateau import Plateau
 
 ref_couleurs = {
     "reine_joueur_1": "purple",
@@ -8,37 +9,6 @@ ref_couleurs = {
     "reine_joueur_2": "orange",
     "tours_joueur_2": "red"
 }
-
-
-class Plateau:
-    def __init__(self, taille):
-        self.taille = taille
-        self.plateau = [[(None, None) for _ in range(taille)]
-                        for _ in range(taille)]  # i = ligne, j = colonne
-        self.initialise_plateau()
-
-    def get_plateau(self):
-        return self.plateau
-
-    def get_taille(self):
-        return self.taille
-    
-    def initialise_plateau(self):
-        """
-        Procédure qui permet de placer les reines et les tours sur le plateau
-        pour chaque joueur en début de partie.
-        """
-        nombre_pions = (self.taille**2)//4-1  # nombre forcément impair
-        # placement initial des tours
-        nombre_lignes_pions = self.taille//2 # nombre de pions par ligne et nombre de lignes
-        for i in range(nombre_lignes_pions):
-            for j in range(nombre_lignes_pions):
-                self.plateau[self.taille-1-i][j] = (2, 0) # tour joueur 1
-                self.plateau[i][self.taille-1-j] = (2, 1) # tour joueur 2
-
-        # 1 = reine / 2 = tour // 0 = joueur 1 / 1 = joueur 2
-        self.plateau[self.taille-1][0] = (1, 0) # reine joueur 1
-        self.plateau[0][self.taille-1] = (1, 1) # reine joueur 2
 
 
 class Jeu:
@@ -52,6 +22,26 @@ class Jeu:
         self.canvas = tk.Canvas(
             self.root, width=self.canvas_width, height=self.canvas_height)
         self.canvas.pack()
+        self.draw_plateau()
+
+    def draw_plateau(self):
+        taille = self.plateau.get_taille()
+        cell_width = self.canvas_width / taille
+        cell_height = self.canvas_height / taille
+
+        for i in range(taille):
+            for j in range(taille):
+                piece, joueur = self.plateau.get_plateau()[i][j]
+                if piece is not None:
+                    if piece == 1:  # reine
+                        color = ref_couleurs[f"reine_joueur_{joueur + 1}"]
+                    elif piece == 2:  # tour
+                        color = ref_couleurs[f"tours_joueur_{joueur + 1}"]
+                    x0 = j * cell_width
+                    y0 = i * cell_height
+                    x1 = x0 + cell_width
+                    y1 = y0 + cell_height
+                    self.canvas.create_oval(x0, y0, x1, y1, fill=color)
 
     def run(self):
         self.root.mainloop()
