@@ -56,15 +56,18 @@ class Jeu:
         for i in range(taille):
             for j in range(taille):
                 piece, joueur = self.plateau.get_plateau()[i][j]
+                x = j * largeur_cellule + margin
+                y = i * hauteur_cellule + margin
+                w = (j + 1) * largeur_cellule - margin
+                h = (i + 1) * hauteur_cellule - margin
+                rect = self.canvas.create_rectangle(x, y, w, h, outline="")
+                self.canvas.tag_bind(
+                    rect, '<Button-1>', lambda event, i=i, j=j: self.click_pion(i, j))
                 if piece is not None:
                     if piece == 1:  # reine
                         color = ref_couleurs[f"reine_joueur_{joueur + 1}"]
                     elif piece == 2:  # tour
                         color = ref_couleurs[f"tours_joueur_{joueur + 1}"]
-                    x = j * largeur_cellule + margin
-                    y = i * hauteur_cellule + margin
-                    w = (j + 1) * largeur_cellule - margin
-                    h = (i + 1) * hauteur_cellule - margin
                     # dessiner le pion sur le canvas
                     oval = self.canvas.create_oval(x, y, w, h, fill=color)
                     # event click sur un pion
