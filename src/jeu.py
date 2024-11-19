@@ -96,7 +96,8 @@ class Jeu:
                 # check ici si c'est possible de le bouger
                 
                 # bouger le pion du joueur vers cette case vide
-                self.move_pion(i, j)
+                if not self.move_pion(i, j):
+                    return
                 reine_coords = self.joueurs[self.tour_joueur[0]].get_coordonnees_reine()
                 if i != reine_coords[0] and j != reine_coords[1]:
                     rectangle_sommets = [
@@ -108,8 +109,7 @@ class Jeu:
                     for x, y in [rectangle_sommets[1], rectangle_sommets[3]]:
                         if plateau[x][y][1] != self.tour_joueur[0] and plateau[x][y][1] is not None:
                             plateau[x][y] = (None, None)
-                    
-                     
+                 
                 if self.check_victoire():
                     self.update_game()
                     self.label.config(text="Partie terminée")
@@ -140,7 +140,44 @@ class Jeu:
         self.tour_joueur[0] = 0 if self.tour_joueur[0] == 1 else 1
         self.label.config(text="À vous de jouer :")
         self.update_game()  # mettre à jour le jeu tkinter
+        
+    def mouvement_valide(self, start, end):
+        start_x, start_y = start
+        end_x, end_y = end
+        piece, _ = self.plateau.get_plateau()[start_x][start_y]
 
+        if piece == 1:  # reine
+            if abs(start_x - end_x) == abs(start_y - end_y) or start_x == end_x or start_y == end_y:
+                return self.chemin_libre(start, end)
+        elif piece == 2:  # tour
+            if start_x == end_x or start_y == end_y:
+                return self.chemin_libre(start, end)
+        return False
+
+    def chemin_libre(self, start, end):
+        start_x, start_y = start
+        end_x, end_y = end
+
+        step_x = (end_x - start_x) // max(1, abs(end_x - start_x))
+        step_y = (end_y - start_y) // max(1, abs(end_y - start_y))
+
+        current_x, current_y = start_x + step_x, start_y + step_y
+        while (current_x, current_y) != (end_x, end_y):
+            if self.plateau.get_plateau()[current_x][current_y][0] is not None:
+                return False
+            current_x += step_x
+            current_y += step_y
+        return True
+
+    def move_pion(self, i, j):
+        if self.mouvement_valide(self.tour_joueur[1], (i, j)):
+            plateau = self.plateau.get_plateau()
+            plateau[i][j] = plateau[self.tour_joueur[1][0]][self.tour_joueur[1][1]]
+            plateau[self.tour_joueur[1][0]][self.tour_joueur[1][1]] = (None, None)
+            return True
+        else:
+            self.label.config(text="Mouvement invalide")
+            return False
     def update_game(self):
         self.canvas.delete("all")
         self.draw_jeu()
