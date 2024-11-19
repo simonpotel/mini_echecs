@@ -119,7 +119,7 @@ class Jeu:
     def mouvement_valide(self, start, end):
         start_x, start_y = start
         end_x, end_y = end
-        piece, joueur = self.plateau.get_plateau()[start_x][start_y]
+        piece, _ = self.plateau.get_plateau()[start_x][start_y]
 
         if piece == 1:  # reine
             if abs(start_x - end_x) == abs(start_y - end_y) or start_x == end_x or start_y == end_y:
