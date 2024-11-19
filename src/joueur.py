@@ -1,6 +1,3 @@
-from loguru import logger 
-from src.tour import Tour
-
 class Joueur:
     def __init__(self):
         self.coordonnees_reine = (None, None)
