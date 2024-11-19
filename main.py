@@ -1,5 +1,6 @@
-from src.jeu import Jeu
+from src.config import PreConfig 
+
 
 if __name__ == "__main__":
-    jeu = Jeu()
-    jeu.run()
+    config = PreConfig()
+    config.charger_menu_configuration()
