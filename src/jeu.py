@@ -14,7 +14,7 @@ class Jeu:
     def __init__(self, taille_plateau):
         self.plateau = Plateau(taille_plateau)
         self.joueurs = [Joueur(), Joueur()]
-        self.joueur_actuel = 0
+        self.tour_joueur = [0, (None, None)] # (tour, (pion_selectioné_x, pion_selectioné_y))
         self.root = tk.Tk()
         self.root.title("Mini Echecs: Jeu")
         self.root.geometry("800x800")
@@ -31,7 +31,7 @@ class Jeu:
 
     def draw_jeu(self):
         self.label.config(text="À vous de jouer !")
-        self.label_joueur.config(text=f"Joueur {self.joueur_actuel + 1}")
+        self.label_joueur.config(text=f"Joueur {self.tour_joueur[0] + 1}")
 
         taille = self.plateau.get_taille()
         largeur_cellule = self.canvas_width / taille
@@ -74,15 +74,34 @@ class Jeu:
                     self.canvas.tag_bind(
                         oval, '<Button-1>', lambda event, i=i, j=j: self.click_pion(i, j))
 
+
+    def move_pion(self, i, j):
+        plateau = self.plateau.get_plateau()        
+        plateau[i][j] = plateau[self.tour_joueur[1][0]][self.tour_joueur[1][1]]
+        plateau[self.tour_joueur[1][0]][self.tour_joueur[1][1]] = (None, None)
+        
+
     def click_pion(self, i, j):
-        if self.joueur_actuel != self.plateau.get_plateau()[i][j][1]:
-            self.label.config(text="Ce n'est pas votre pion.")
-            return
+        case = self.plateau.get_plateau()[i][j]
+        if case[0] is None: # case vide (aucun pion)
+            if self.tour_joueur[1] == (None, None): # aucun pion selectionné
+                self.label.config(text="Vous devez sélectionner un de vos pions avant de bouger.")
+                return
+            else: # pion selectionné
+                self.move_pion(i, j) # bouger le pion du joueur vers cette case vide
+                print('move')
         else:
-            self.label.config(text="Votre pion a disparu !.!")
-        self.plateau.get_plateau()[i][j] = (None, None)
-        self.joueur_actuel = 0 if self.joueur_actuel == 1 else 1
-        self.update_game()
+            if self.tour_joueur[0] != case[1]: # la case a un pion qui n'appartient pas au joueur
+                self.label.config(text="Ce n'est pas votre pion.") # on ne peut pas sélectionner un pion qui n'est pas le notre
+                return
+            else: # la case a un pion qui appartient au joueur
+                self.label.config(text=f"Vous avez sélectionné le pion {i}, {j}") # on remplace l'ancienne selection par la nouvelle
+                self.tour_joueur[1] = (i, j)
+                return
+                
+        self.tour_joueur[1] = (None, None) # réinitialiser la case selectionnée pour le prochain joueur
+        self.tour_joueur[0] = 0 if self.tour_joueur[0] == 1 else 1 # définition du tour du joueur suivant
+        self.update_game() # mettre à jour le jeu tkinter
 
     def update_game(self):
         self.canvas.delete("all")
