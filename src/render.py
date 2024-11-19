@@ -13,7 +13,7 @@ class Render:
     def __init__(self, plateau):
         self.plateau = plateau
         self.root = tk.Tk()
-        self.root.title = ("mini_echecs")
+        self.root.title("mini_echecs")
         self.root.geometry("800x800")
         self.canvas_width = 600
         self.canvas_height = 600
