@@ -77,7 +77,7 @@ class Jeu:
                     # dessiner un cercle vert autour du pion sélectionné
                     if (i, j) == self.tour_joueur[1]:
                         self.canvas.create_oval(x - 5, y - 5, w + 5, h + 5, outline="green", width=2)
-
+                    
     def move_pion(self, i, j):
         plateau = self.plateau.get_plateau()
         plateau[i][j] = plateau[self.tour_joueur[1][0]][self.tour_joueur[1][1]]
@@ -91,8 +91,18 @@ class Jeu:
                     text="Vous devez sélectionner un de vos pions avant de bouger.")
                 return
             else:  # pion selectionné
+                # check ici si c'est possible de le bouger
+                
                 # bouger le pion du joueur vers cette case vide
                 self.move_pion(i, j)
+                
+                if i != self.tour_joueur[1][0] and j != self.tour_joueur[1][1]:
+                    # dans le sens des aiguilles d'une montre (haut gauche, haut droit, bas droit, bas gauche)
+                    rectangle_sommets = [(None, None), (None, None), (None, None), (None, None)]    
+                    rectangle_sommets[0] = (i, j)
+                    rectangle_sommets[1] = (i, self.tour_joueur[1][1])
+                    rectangle_sommets[2] = (self.tour_joueur[1][0], self.tour_joueur[1][1])
+                    rectangle_sommets[3] = (self.tour_joueur[1][0], j)            
                 if self.check_victoire():
                     self.update_game()
                     self.label.config(text="Partie terminée")
