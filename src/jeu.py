@@ -2,6 +2,13 @@ from loguru import logger
 import tkinter as tk
 from src.joueur import Joueur
 
+syntax_couleurs = {
+    "reine_joueur_1": "purple",
+    "tours_joueur_1": "blue",
+    "reine_joueur_2": "orange",
+    "tour_joueur_2": "red"
+}
+
 class Plateau:
     def __init__(self, taille):
         self.taille = taille
