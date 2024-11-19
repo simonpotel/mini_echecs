@@ -17,9 +17,13 @@ class Render:
         self.root.geometry("800x800")
         self.canvas_width = 600
         self.canvas_height = 600
+        self.label = tk.Label(self.root, text="Mini Echecs")
         self.canvas = tk.Canvas(
             self.root, width=self.canvas_width, height=self.canvas_height)
+        self.label.pack()
         self.canvas.pack()
+        self.label_joueur = tk.Label(self.root, text="Joueur 1", font=("Helvetica, 20"))
+        self.label_joueur.pack()
         self.draw_plateau()
 
     def draw_plateau(self):
@@ -34,7 +38,7 @@ class Render:
             self.canvas.create_line(largeur_bordure, i * hauteur_cellule, self.canvas_width,
                                     i * hauteur_cellule)  # lignes horizontales
             self.canvas.create_line(
-                i * largeur_cellule, largeur_bordure, i * largeur_cellule, self.canvas_height + 1)  # lignes verticales
+                i * largeur_cellule, largeur_bordure, i * largeur_cellule, self.canvas_height + 0.25)  # lignes verticales
 
 
         # ligne gauche verticale

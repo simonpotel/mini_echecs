@@ -50,5 +50,7 @@ class Jeu:
             messagebox.showerror("Erreur", "Veuillez entrer un nombre valide.")
 
     def run(self):
+        joueur_courant = 0
+        self.render.update_joueur(joueur_courant)
         self.render.run()
         print('run')
