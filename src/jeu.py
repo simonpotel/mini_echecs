@@ -90,7 +90,7 @@ class Jeu:
         if case[0] is None:  # case vide (aucun pion)
             if self.tour_joueur[1] == (None, None):  # aucun pion selectionné
                 self.label.config(
-                    text="Vous devez sélectionner un de vos pions avant de bouger.")
+                    text="Vous devez sélectionner un de vos pieces avant de bouger.")
                 return
             else:  # pion selectionné
                 # check ici si c'est possible de le bouger
@@ -107,13 +107,17 @@ class Jeu:
                         (reine_coords[0], j)
                     ]
                     for x, y in [rectangle_sommets[1], rectangle_sommets[3]]:
-                        if plateau[x][y][1] != self.tour_joueur[0] and plateau[x][y][1] is not None:
+                        if plateau[x][y][1] != self.tour_joueur[0] and plateau[x][y][1] is not None and plateau[x][y][0] == 2:
+                            self.joueurs[plateau[x][y][1]].retirer_piece()
                             plateau[x][y] = (None, None)
                  
                 if self.check_victoire():
                     self.update_game()
                     self.label.config(text="Partie terminée")
-                    self.label_joueur.config(text="Victoire pour le joueur " + str(self.joueur_actuel + 1))
+                    self.label_joueur.config(text="Victoire pour le joueur " + str(self.tour_joueur[0] + 1))
+                    self.root.quit()
+                    return 
+
         else:
             # la case a un pion qui n'appartient pas au joueur
             if self.tour_joueur[0] != case[1]:
@@ -183,24 +187,10 @@ class Jeu:
         self.draw_jeu()
 
     def check_victoire(self):
-        plateau = self.plateau.get_plateau()
-        taille = self.plateau.get_taille()
-        pions_joueur_1 = 0
-        pions_joueur_2 = 0
-
-        for i in range(taille):
-            for j in range(taille):
-                piece, joueur = plateau[i][j]
-                if piece is not None:
-                    if joueur == 0:
-                        pions_joueur_1 += 1
-                    else:
-                        pions_joueur_2 += 1
-
-        if pions_joueur_1 < 3:
+        if self.joueurs[0].get_pieces_restantes() <= 2:
             print("Joueur 2 a gagné")
             return True
-        elif pions_joueur_2 < 3:
+        elif self.joueurs[1].get_pieces_restantes() <= 2:
             print("Joueur 1 a gagné")
             return True
         return False
