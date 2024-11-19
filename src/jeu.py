@@ -74,6 +74,9 @@ class Jeu:
                     # event click sur un pion
                     self.canvas.tag_bind(
                         oval, '<Button-1>', lambda event, i=i, j=j: self.click_pion(i, j))
+                    # dessiner un cercle vert autour du pion sélectionné
+                    if (i, j) == self.tour_joueur[1]:
+                        self.canvas.create_oval(x - 5, y - 5, w + 5, h + 5, outline="green", width=2)
 
     def move_pion(self, i, j):
         plateau = self.plateau.get_plateau()
