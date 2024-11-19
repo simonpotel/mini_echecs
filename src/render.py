@@ -34,10 +34,12 @@ class Render:
             self.canvas.create_line(
                 i * largeur_cellule, 0, i * largeur_cellule, self.canvas_height)  # lignes verticales
 
+        nx = 2.5
+
         # ligne gauche verticale
-        self.canvas.create_line(3, 3, 3, self.canvas_height)
+        self.canvas.create_line(nx, nx, nx, self.canvas_height)
         # ligne haute horizontale
-        self.canvas.create_line(3, 3, self.canvas_width, 3)
+        self.canvas.create_line(nx, nx, self.canvas_width, nx)
 
         for i in range(taille):
             for j in range(taille):
