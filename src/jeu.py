@@ -10,11 +10,13 @@ ref_couleurs = {
     "tours_joueur_2": "red"
 }
 
+
 class Jeu:
     def __init__(self, taille_plateau):
         self.plateau = Plateau(taille_plateau)
         self.joueurs = [Joueur(), Joueur()]
-        self.tour_joueur = [0, (None, None)] # (tour, (pion_selectioné_x, pion_selectioné_y))
+        # (tour, (pion_selectioné_x, pion_selectioné_y))
+        self.tour_joueur = [0, (None, None)]
         self.root = tk.Tk()
         self.root.title("Mini Echecs: Jeu")
         self.root.geometry("800x800")
@@ -25,7 +27,8 @@ class Jeu:
             self.root, width=self.canvas_width, height=self.canvas_height)
         self.label.pack()
         self.canvas.pack()
-        self.label_joueur = tk.Label(self.root, text="Joueur 1", font=("Helvetica, 20"))
+        self.label_joueur = tk.Label(
+            self.root, text="Joueur 1", font=("Helvetica, 20"))
         self.label_joueur.pack()
         self.draw_jeu()
 
@@ -44,7 +47,8 @@ class Jeu:
             self.canvas.create_line(largeur_bordure, i * hauteur_cellule, self.canvas_width,
                                     i * hauteur_cellule)  # lignes horizontales
             self.canvas.create_line(
-                i * largeur_cellule, largeur_bordure, i * largeur_cellule, self.canvas_height + 0.25)  # lignes verticales
+                # lignes verticales
+                i * largeur_cellule, largeur_bordure, i * largeur_cellule, self.canvas_height + 0.25)
 
         # ligne gauche verticale
         self.canvas.create_line(
@@ -74,41 +78,48 @@ class Jeu:
                     self.canvas.tag_bind(
                         oval, '<Button-1>', lambda event, i=i, j=j: self.click_pion(i, j))
 
-
     def move_pion(self, i, j):
-        plateau = self.plateau.get_plateau()        
+        plateau = self.plateau.get_plateau()
         plateau[i][j] = plateau[self.tour_joueur[1][0]][self.tour_joueur[1][1]]
         plateau[self.tour_joueur[1][0]][self.tour_joueur[1][1]] = (None, None)
-        
 
     def click_pion(self, i, j):
         case = self.plateau.get_plateau()[i][j]
-        if case[0] is None: # case vide (aucun pion)
-            if self.tour_joueur[1] == (None, None): # aucun pion selectionné
-                self.label.config(text="Vous devez sélectionner un de vos pions avant de bouger.")
+        if case[0] is None:  # case vide (aucun pion)
+            if self.tour_joueur[1] == (None, None):  # aucun pion selectionné
+                self.label.config(
+                    text="Vous devez sélectionner un de vos pions avant de bouger.")
                 return
-            else: # pion selectionné
-                self.move_pion(i, j) # bouger le pion du joueur vers cette case vide
-                print('move')
+            else:  # pion selectionné
+                # bouger le pion du joueur vers cette case vide
+                self.move_pion(i, j)
+                if self.check_victoire():
+                    self.update_game()
+                    self.label.config(text="Partie terminée")
+                    self.label_joueur.config(text="Victoire pour le joueur " + str(self.joueur_actuel + 1))
         else:
-            if self.tour_joueur[0] != case[1]: # la case a un pion qui n'appartient pas au joueur
-                self.label.config(text="Ce n'est pas votre pion.") # on ne peut pas sélectionner un pion qui n'est pas le notre
+            # la case a un pion qui n'appartient pas au joueur
+            if self.tour_joueur[0] != case[1]:
+                # on ne peut pas sélectionner un pion qui n'est pas le notre
+                self.label.config(text="Ce n'est pas votre pion.")
                 return
-            else: # la case a un pion qui appartient au joueur
-                self.label.config(text=f"Vous avez sélectionné le pion {i}, {j}") # on remplace l'ancienne selection par la nouvelle
+            else:  # la case a un pion qui appartient au joueur
+                # on remplace l'ancienne selection par la nouvelle
+                self.label.config(
+                    text=f"Vous avez sélectionné le pion {i}, {j}")
                 self.tour_joueur[1] = (i, j)
                 return
-                
-        self.tour_joueur[1] = (None, None) # réinitialiser la case selectionnée pour le prochain joueur
-        self.tour_joueur[0] = 0 if self.tour_joueur[0] == 1 else 1 # définition du tour du joueur suivant
-        self.update_game() # mettre à jour le jeu tkinter
+
+        # réinitialiser la case selectionnée pour le prochain joueur
+        self.tour_joueur[1] = (None, None)
+        # définition du tour du joueur suivant
+        self.tour_joueur[0] = 0 if self.tour_joueur[0] == 1 else 1
+        self.update_game()  # mettre à jour le jeu tkinter
 
     def update_game(self):
         self.canvas.delete("all")
         self.draw_jeu()
 
-    
-    
     def check_victoire(self):
         plateau = self.plateau.get_plateau()
         taille = self.plateau.get_taille()
@@ -131,7 +142,6 @@ class Jeu:
             print("Joueur 1 a gagné")
             return True
         return False
-            
 
     def run(self):
         self.update_game()
