@@ -25,6 +25,7 @@ class Render:
         taille = self.plateau.get_taille()
         cell_width = self.canvas_width / taille
         cell_height = self.canvas_height / taille
+        margin = 10
 
         for i in range(taille + 1):
             self.canvas.create_line(0, i * cell_height, self.canvas_width,
@@ -39,11 +40,11 @@ class Render:
                         color = ref_couleurs[f"reine_joueur_{joueur + 1}"]
                     elif piece == 2:  # tour
                         color = ref_couleurs[f"tours_joueur_{joueur + 1}"]
-                    x0 = j * cell_width
-                    y0 = i * cell_height
-                    x1 = x0 + cell_width
-                    y1 = y0 + cell_height
-                    self.canvas.create_oval(x0, y0, x1, y1, fill=color, margin=5)
+                    x0 = j * cell_width + margin
+                    y0 = i * cell_height + margin
+                    x1 = (j + 1) * cell_width - margin
+                    y1 = (i + 1) * cell_height - margin
+                    self.canvas.create_oval(x0, y0, x1, y1, fill=color)
                     
 
     def run(self):
