@@ -23,15 +23,16 @@ class Render:
 
     def draw_plateau(self):
         taille = self.plateau.get_taille()
-        cell_width = self.canvas_width / taille
-        cell_height = self.canvas_height / taille
+        largeur_cellule = self.canvas_width / taille
+        hauteur_cellule = self.canvas_height / taille
         margin = 10
 
         for i in range(taille + 1):
-            self.canvas.create_line(0, i * cell_height, self.canvas_width,
-                                    i * cell_height)
-            self.canvas.create_line(i * cell_width, 0, i * cell_width, self.canvas_height)
-        
+            self.canvas.create_line(0, i * hauteur_cellule, self.canvas_width,
+                                    i * hauteur_cellule)
+            self.canvas.create_line(
+                i * largeur_cellule, 0, i * largeur_cellule, self.canvas_height)
+
         for i in range(taille):
             for j in range(taille):
                 piece, joueur = self.plateau.get_plateau()[i][j]
@@ -40,12 +41,11 @@ class Render:
                         color = ref_couleurs[f"reine_joueur_{joueur + 1}"]
                     elif piece == 2:  # tour
                         color = ref_couleurs[f"tours_joueur_{joueur + 1}"]
-                    x0 = j * cell_width + margin
-                    y0 = i * cell_height + margin
-                    x1 = (j + 1) * cell_width - margin
-                    y1 = (i + 1) * cell_height - margin
-                    self.canvas.create_oval(x0, y0, x1, y1, fill=color)
-                    
+                    x = j * largeur_cellule + margin
+                    y = i * hauteur_cellule + margin
+                    w = (j + 1) * largeur_cellule - margin
+                    h = (i + 1) * hauteur_cellule - margin
+                    self.canvas.create_oval(x, y, w, h, fill=color)
 
     def run(self):
         self.root.mainloop()
