@@ -15,7 +15,6 @@ class Jeu:
     def __init__(self, taille_plateau):
         self.plateau = Plateau(taille_plateau)
         self.joueurs = [Joueur(), Joueur()]
-        # (tour, (pion_selectioné_x, pion_selectioné_y))
         self.tour_joueur = [0, (None, None)]
         self.root = tk.Tk()
         self.root.title("Mini Echecs: Jeu")
@@ -23,13 +22,11 @@ class Jeu:
         self.canvas_width = 600
         self.canvas_height = 600
         self.label = tk.Label(self.root, text="Mini Echecs")
-        self.label.pack(pady=(10, 0))  # Ajouter une marge en haut
-        self.label_joueur = tk.Label(
-            self.root, text="Joueur 1", font=("Helvetica, 20"))
-        self.label_joueur.pack(pady=(0, 10))  # Ajouter une marge en bas
-        self.canvas = tk.Canvas(
-            self.root, width=self.canvas_width, height=self.canvas_height)
-        self.canvas.pack(pady=(10, 0))  # Ajouter une marge en haut du canvas
+        self.label.pack(pady=(10, 0))
+        self.label_joueur = tk.Label(self.root, text="Joueur 1", font=("Helvetica, 20"))
+        self.label_joueur.pack(pady=(0, 10))
+        self.canvas = tk.Canvas(self.root, width=self.canvas_width, height=self.canvas_height)
+        self.canvas.pack(pady=(10, 0))
         self.draw_jeu()
 
     def draw_jeu(self):
@@ -49,10 +46,8 @@ class Jeu:
             self.canvas.create_line(
                 i * largeur_cellule, largeur_bordure, i * largeur_cellule, self.canvas_height + 0.25)  # lignes verticales
 
-        # ligne gauche verticale
         self.canvas.create_line(
             largeur_bordure, largeur_bordure, largeur_bordure, self.canvas_height)
-        # ligne haute horizontale
         self.canvas.create_line(
             largeur_bordure, largeur_bordure, self.canvas_width, largeur_bordure)
 
@@ -71,9 +66,7 @@ class Jeu:
                         color = ref_couleurs[f"reine_joueur_{joueur + 1}"]
                     elif piece == 2:  # tour
                         color = ref_couleurs[f"tours_joueur_{joueur + 1}"]
-                    # dessiner le pion sur le canvas
                     oval = self.canvas.create_oval(x, y, w, h, fill=color)
-                    # event click sur un pion
                     self.canvas.tag_bind(
                         oval, '<Button-1>', lambda event, i=i, j=j: self.click_pion(i, j))
 
