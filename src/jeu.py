@@ -4,6 +4,11 @@ from src.plateau import Plateau
 
 
 class Jeu:
+    """
+    class Jeu : représente le mini jeu d'échecs avec les règles et les composants du jeu.
+    gére l'interface graphique du jeu avec tkinter et les événements de clic sur le canvas
+    pour le déplacement des pions et le déroulement du jeu.
+    """
     ref_couleurs = {
         "reine_joueur_1": "purple",
         "tours_joueur_1": "blue",

@@ -1,4 +1,8 @@
 class Plateau:
+    """
+    class Plateau: représente le plateau de jeu avec ses cases
+    et les pions présents sur celles-ci.
+    """
     def __init__(self, taille, joueurs):
         self.taille = taille
         self.plateau = [[(None, None) for _ in range(taille)]
@@ -12,6 +16,10 @@ class Plateau:
         return self.taille
     
     def initialise_plateau(self, joueurs):
+        """
+        procédure qui initialise le plateau de jeu avec les pions de chaque joueur
+        et set les coordonnées de la reine et le nombre de tours restants pour chaque joueur (par défaut en début de partie)
+        """
         nombre_pions = (self.taille**2)//4-1  # nombre forcément impair
         # placement initial des tours
         nombre_lignes_pions = self.taille//2 # nombre de pions par ligne et nombre de lignes

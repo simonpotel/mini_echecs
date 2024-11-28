@@ -1,4 +1,8 @@
 class Joueur:
+    """
+    class Joueur : représente un joueur
+    avec ses coordonnées de reine et le nombre de tours restants
+    """
     def __init__(self):
         self.coordonnees_reine = (None, None)
         self.tours_restantes = None
