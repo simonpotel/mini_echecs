@@ -1,4 +1,4 @@
-from src.config import PreConfig 
+from src.config import PreConfig
 
 
 if __name__ == "__main__":

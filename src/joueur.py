@@ -6,6 +6,9 @@ class Joueur:
     def set_tours_restantes(self, nombre_tours):
         self.tours_restantes = nombre_tours
 
+    def perdre_tour(self):
+        self.tours_restantes -= 1
+
     def set_coordonnees_reine(self, x, y):
         self.coordonnees_reine = (x, y)
 
