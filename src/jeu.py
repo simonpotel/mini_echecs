@@ -78,41 +78,6 @@ class Jeu:
         hauteur_cellule = self.canvas_height / taille
         margin = 10
 
-<<<<<<< Updated upstream
-    def click_pion(self, i, j):
-        case = self.plateau.get_plateau()[i][j]
-        if case[0] is None:  # case vide (aucun pion)
-            if self.tour_joueur[1] == (None, None):  # aucun pion selectionné
-                self.label.config(
-                    text="Vous devez sélectionner un de vos pions avant de bouger.")
-                return
-            else:  # pion selectionné
-                # bouger le pion du joueur vers cette case vide
-                self.move_pion(i, j)
-                if self.check_victoire():
-                    self.update_game()
-                    self.label.config(text="Partie terminée")
-                    self.label_joueur.config(text="Victoire pour le joueur " + str(self.joueur_actuel + 1))
-        else:
-            # la case a un pion qui n'appartient pas au joueur
-            if self.tour_joueur[0] != case[1]:
-                # on ne peut pas sélectionner un pion qui n'est pas le notre
-                self.label.config(text="Ce n'est pas votre pion.")
-                return
-            else:  # la case a un pion qui appartient au joueur
-                # on remplace l'ancienne selection par la nouvelle
-                self.label.config(
-                    text=f"Vous avez sélectionné le pion {i}, {j}")
-                self.tour_joueur[1] = (i, j)
-                return
-
-        # réinitialiser la case selectionnée pour le prochain joueur
-        self.tour_joueur[1] = (None, None)
-        # définition du tour du joueur suivant
-        self.tour_joueur[0] = 0 if self.tour_joueur[0] == 1 else 1
-        self.update_game()  # mettre à jour le jeu tkinter
-
-=======
         for x in range(taille):
             for y in range(taille):
                 if self.mouvement_valide((i, j), (x, y)):
@@ -205,13 +170,10 @@ class Jeu:
         self.update_game()  # mettre à jour le jeu tkinter
         
 
->>>>>>> Stashed changes
     def update_game(self):
         self.canvas.delete("all")
         self.effacer_previsualisation()
         self.draw_jeu()
-<<<<<<< Updated upstream
-=======
         self.canvas.bind("<Button-1>", self.on_canvas_click)
 
     def on_canvas_click(self, event):
@@ -256,7 +218,6 @@ class Jeu:
     def effacer_previsualisation(self):
         """Efface les mouvements prévisualisés."""
         self.canvas.delete("previsualisation")
->>>>>>> Stashed changes
 
     def check_victoire(self):
         plateau = self.plateau.get_plateau()
