@@ -12,11 +12,6 @@ class Plateau:
         return self.taille
     
     def initialise_plateau(self):
-        """
-        Procédure qui permet de placer les reines et les tours sur le plateau
-        pour chaque joueur en début de partie.
-        """
-        nombre_pions = (self.taille**2)//4-1  # nombre forcément impair
         # placement initial des tours
         nombre_lignes_pions = self.taille//2 # nombre de pions par ligne et nombre de lignes
         for i in range(nombre_lignes_pions):
