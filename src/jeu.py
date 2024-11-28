@@ -2,16 +2,19 @@ import tkinter as tk
 from src.joueur import Joueur
 from src.plateau import Plateau
 
-ref_couleurs = {
-    "reine_joueur_1": "purple",
-    "tours_joueur_1": "blue",
-    "reine_joueur_2": "orange",
-    "tours_joueur_2": "red"
-}
-
 
 class Jeu:
+    ref_couleurs = {
+        "reine_joueur_1": "purple",
+        "tours_joueur_1": "blue",
+        "reine_joueur_2": "orange",
+        "tours_joueur_2": "red"
+    }
+
     def __init__(self, taille_plateau):
+        """
+        procédure: initialise les composants du jeu et l'interface graphique.
+        """
         self.joueurs = [Joueur(), Joueur()]  # 0 = joueur 1 / 1 = joueur 2
         # plateau de jeu (board) avec tableau de tuples (piece, joueur)
         self.plateau = Plateau(taille_plateau, self.joueurs)
@@ -35,6 +38,10 @@ class Jeu:
         self.dessiner_jeu()  # dessine le board
 
     def dessiner_jeu(self):
+        """
+        procédure: dessine le plateau de jeu et les pièces sur le canvas.
+        """
+
         self.label_instruction.config(
             text="À vous de jouer !", font=("Helvetica, 15"))
         self.label_tour_joueur.config(text=f"Joueur {self.tour_joueur[0] + 1}")
@@ -78,10 +85,10 @@ class Jeu:
                 if piece is not None:  # si la case contient un pion
                     if piece == 1:  # reine
                         # couleur de la reine en fonction du joueur
-                        color = ref_couleurs[f"reine_joueur_{joueur + 1}"]
+                        color = self.ref_couleurs[f"reine_joueur_{joueur + 1}"]
                     elif piece == 2:  # tour
                         # couleur de la tour en fonction du joueur
-                        color = ref_couleurs[f"tours_joueur_{joueur + 1}"]
+                        color = self.ref_couleurs[f"tours_joueur_{joueur + 1}"]
                     # dessiner le pion sur le canvas
                     pion = self.canvas.create_oval(x, y, w, h, fill=color)
                     # event click sur un pion
@@ -90,7 +97,12 @@ class Jeu:
                     # dessiner un cercle vert autour du pion sélectionné
 
     def afficher_selection_joueur(self, i, j):
-        self.effacer_previsualisation()  # effacer les mouvements prévisualisés auparavant
+        """
+        procédure: Affiche la sélection du joueur et les mouvements possibles sur le plateau.
+        """
+
+        # effacer les mouvements prévisualisés auparavant
+        self.canvas.delete("previsualisation")
         taille = self.plateau.get_taille()
         largeur_cellule = self.canvas_width / taille
         hauteur_cellule = self.canvas_height / taille
@@ -115,10 +127,19 @@ class Jeu:
                     )
 
     def effacer_previsualisation(self):
+        """
+        procédure: efface les mouvements prévisualisés sur le canvas.
+        """
+
         # effacer les mouvements prévisualisés
         self.canvas.delete("previsualisation")
 
     def chemin_libre(self, start, end):
+        """
+        fonction: vérifie si le chemin entre deux cases est libre pour un mouvement. (start(x,y) -> end(x,y))
+        return True ou False si le chemin est libre ou non
+        """
+
         # vérifie si le chemin entre deux cases est libre pour un mouvement
         start_x, start_y = start
         end_x, end_y = end
@@ -138,6 +159,11 @@ class Jeu:
         return True  # le chemin est libre
 
     def mouvement_valide(self, start, end):
+        """
+        fonction: vérifie si un mouvement est valide pour une pièce donnée sur un plateau d'échecs
+        return True ou False si le mouvement est valide ou non
+        """
+
         start_x, start_y = start  # position de départ
         end_x, end_y = end  # position d'arrivée
         piece, _ = self.plateau.get_plateau(
@@ -158,6 +184,11 @@ class Jeu:
         return False
 
     def deplacer_pion(self, i, j):
+        """
+        procédure: déplace un pion sur le plateau de jeu si le mouvement est valide
+        return True ou False si le mouvement est valide ou non
+        """
+
         # si le mouvement est valide
         if self.mouvement_valide(self.tour_joueur[1], (i, j)):
             plateau = self.plateau.get_plateau()
@@ -166,7 +197,8 @@ class Jeu:
                                     ][self.tour_joueur[1][1]]
             plateau[self.tour_joueur[1][0]][self.tour_joueur[1][1]] = (
                 None, None)  # vider la case de départ
-            self.effacer_previsualisation()  # effacer les mouvements prévisualisés
+            # effacer les mouvements prévisualisés
+            self.canvas.delete("previsualisation")
             return True
         else:
             # le mouvement n'est pas valide
@@ -174,6 +206,11 @@ class Jeu:
             return False
 
     def event_click_pion(self, i, j):
+        """
+        procédure: gère les événements de clic sur un pion dans le jeu d'échecs
+        permet la selection du pion et le déplacement des pions
+        """
+
         plateau = self.plateau.get_plateau()
         case = plateau[i][j]
         if case[0] is None:  # case vide (aucun pion)
@@ -205,7 +242,8 @@ class Jeu:
                     # afficher le joueur gagnant
                     self.label_tour_joueur.config(
                         text="Victoire pour le joueur " + str(self.joueur_actuel + 1))
-                self.effacer_previsualisation()  # effacer les mouvements prévisualisés
+                # effacer les mouvements prévisualisés
+                self.canvas.delete("previsualisation")
         else:
             # la case a un pion qui n'appartient pas au joueur
             if self.tour_joueur[0] != case[1]:
@@ -239,13 +277,23 @@ class Jeu:
         self.update_tkinter()  # mettre à jour le jeu tkinter
 
     def update_tkinter(self):
+        """
+        procédure: met à jour l'interface Tkinter en effaçant et redessinant le canvas, 
+        et en liant l'événement de clic sur le canvas à une fonction de gestion des événements
+        """
+
         self.canvas.delete("all")  # effacer le canvas
-        self.effacer_previsualisation()  # effacer les mouvements prévisualisés
+        # effacer les mouvements prévisualisés
+        self.canvas.delete("previsualisation")
         self.dessiner_jeu()  # redessiner le jeu
         # event click sur le canvas
         self.canvas.bind("<Button-1>", self.event_click_canvas)
 
     def event_click_canvas(self, event):
+        """
+        procédure: gère l'événement de clic sur le canvas et affiche les déplacements possibles pour la position cliquée
+        """
+
         x = event.x  # position x du click relative au board (canvas tkinter)
         y = event.y  # position y du click relative au board (canvas tkinter)
         taille = self.plateau.get_taille()
@@ -256,6 +304,9 @@ class Jeu:
         self.afficher_deplacements_possibles(i, j)
 
     def afficher_deplacements_possibles(self, i, j):
+        """
+        procédure: affiche les déplacements possibles pour la pièce située à la position (i, j) sur le plateau
+        """
         # récupérer la pièce sur la case
         piece = self.plateau.get_plateau()[i][j][0]
         if piece is not None:
@@ -265,6 +316,9 @@ class Jeu:
             self.dessiner_deplacements_possibles(moves)
 
     def get_deplacements_possibles(self, i, j):
+        """
+        fonction: retourne une liste de tuples représentant les mouvements possibles pour une pièce donnée
+        """
         taille = self.plateau.get_taille()
         possible_moves = []
         for x in range(taille):
@@ -274,6 +328,9 @@ class Jeu:
         return possible_moves
 
     def dessiner_deplacements_possibles(self, moves):
+        """
+        procédure: dessine les déplacements possibles sur le plateau de jeu
+        """
         for move in moves:  # pour chaque mouvement possible (x, y)
             x, y = move
             x0 = y * (self.canvas_width / self.plateau.get_taille())
@@ -284,10 +341,11 @@ class Jeu:
             self.canvas.create_rectangle(
                 x0, y0, x1, y1, tags="previsualisation")
 
-    def effacer_previsualisation(self):
-        self.canvas.delete("previsualisation")
-
     def check_victoire(self):
+        """
+        fonction : vérifie si un joueur a gagné la partie 
+        return True/False si un joueur a gagné ou non
+        """
         plateau = self.plateau.get_plateau()
         taille = self.plateau.get_taille()
         pions_joueur_1 = 0
@@ -313,5 +371,8 @@ class Jeu:
         return False
 
     def run(self):
+        """
+        procédure : lance le jeu et met à jour le jeu tkinter
+        """
         self.update_tkinter()  # mettre à jour le jeu tkinter
         self.root.mainloop()  # lancer le jeu
