@@ -8,8 +8,6 @@ class Game:
     class Game : représente le mini game d'échecs avec les règles et les composants du game.
     """
 
-
-
     def __init__(self, size_board):
         """
         procédure: initialise les composants du game et l'interface graphique.
@@ -23,7 +21,7 @@ class Game:
 
     def is_correct_move(self, start, end):
         """
-        fonction: vérifie si un move est correct pour une pièce donnée sur un board d'échecs
+        méthode: vérifie si un move est correct pour une pièce donnée sur un board d'échecs
         return True ou False si le move est correct ou non
         """
 
@@ -48,7 +46,7 @@ class Game:
 
     def is_path_free(self, start, end):
         """
-        fonction: vérifie si le path entre deux cases est free pour un move. (start(x,y) -> end(x,y))
+        méthode: vérifie si le path entre deux cases est free pour un move. (start(x,y) -> end(x,y))
         return True ou False si le path est free ou non
         """
 
@@ -173,7 +171,7 @@ class Game:
 
     def get_moves_possibles(self, i, j):
         """
-        fonction: retowerne une liste de tuples représentant les moves possibles pour une pièce donnée
+        méthode: retowerne une liste de tuples représentant les moves possibles pour une pièce donnée
         """
         size = self.board.get_size()
         possible_moves = []
@@ -185,7 +183,7 @@ class Game:
 
     def check_win(self):
         """
-        fonction : vérifie si un player a gagné la game 
+        méthode : vérifie si un player a gagné la game 
         return True/False si un player a gagné ou non
         """
         board = self.board.get_board()
