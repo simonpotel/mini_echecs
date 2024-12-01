@@ -90,7 +90,7 @@ class Jeu:
             plateau[self.tour_joueur[1][0]][self.tour_joueur[1][1]] = (
                 None, None)  # vider la case de départ
             # effacer les mouvements prévisualisés
-            self.rendu.canvas.delete("previsualisation")
+            self.rendu.effacer_previsualisation()
             return True
         else:
             # le mouvement n'est pas valide
@@ -135,7 +135,7 @@ class Jeu:
                     self.rendu.label_tour_joueur.config(
                         text="Victoire pour le joueur " + str(self.tour_joueur[0] + 1))
                 # effacer les mouvements prévisualisés
-                self.rendu.canvas.delete("previsualisation")
+                self.rendu.effacer_previsualisation()
         else:
             # la case a un pion qui n'appartient pas au joueur
             if self.tour_joueur[0] != case[1]:
