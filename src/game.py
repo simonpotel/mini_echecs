@@ -145,6 +145,10 @@ class Game:
                     text="Ce n'est pas votre piece.")
                 return
             else:  # la case a un piece qui apgament au player
+                if self.get_moves_possibles(i, j) == []:  # aucun move possible
+                    self.render.label_instruction.config(
+                        text="Aucun mouvement possible pour cette pièce.")
+                    return
                 # on remplace l'ancienne selection par la nouvelle
                 match case[0]:
                     case 1:  # queen
