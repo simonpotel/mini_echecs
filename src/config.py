@@ -1,55 +1,55 @@
-from src.jeu import Jeu
+from src.game import Game
 import tkinter as tk
 from tkinter import messagebox
 
 
 class PreConfig:
     """
-    class PreConfig représente le menu de configuration du jeu avant de lancer une partie
+    class PreConfig représente le gui de config du game avant de lancer une game
     """
 
     def __init__(self):
         self.root = None
 
-        # taille du plateau
-        self.label_taille = None
-        self.entry_taille = None
-        # bouton charger partie
-        self.bouton_charger = None
+        # size du board
+        self.label_size = None
+        self.entry_size = None
+        # bouton load game
+        self.bouton_load = None
 
-    def charger_menu_configuration(self):
+    def load_gui_config(self):
         """
-        procédure qui charge le menu de configuration du jeu avant de lancer une partie
+        procédure qui charge le gui de config du game avant de lancer une game
         """
         self.root = tk.Tk()
         self.root.title("Mini Echecs: PreConfig")
 
-        self.label_taille = tk.Label(
-            self.root, text="Taille du plateau (6-12):")
-        self.label_taille.pack(pady=10)
+        self.label_size = tk.Label(
+            self.root, text="Taille du board (6-12):")
+        self.label_size.pack(pady=10)
 
-        self.entry_taille = tk.Entry(self.root)
-        self.entry_taille.insert(0, "8")
-        self.entry_taille.pack(pady=10)
+        self.entry_size = tk.Entry(self.root)
+        self.entry_size.insert(0, "8")
+        self.entry_size.pack(pady=10)
 
-        self.bouton_charger = tk.Button(
+        self.bouton_load = tk.Button(
             # event quand on clique sur le bouton
-            self.root, text="Charger", command=self.charger_partie)
-        self.bouton_charger.pack(pady=10)
+            self.root, text="Charger", command=self.load_game)
+        self.bouton_load.pack(pady=10)
 
         self.root.mainloop()
 
-    def charger_partie(self):
+    def load_game(self):
         try:
-            taille_plateau = int(self.entry_taille.get())
-            # taille comprise entre 6 et 12 (énnoncé)
-            if 6 <= taille_plateau <= 12:
-                self.root.destroy()  # ferme la fenêtre tkinter de configuration car plus nécessaire
-                # on crée une instance de la classe Jeu
-                jeu = Jeu(taille_plateau)
-                jeu.run()  # on lance la partie
+            size_board = int(self.entry_size.get())
+            # size comprise entre 6 et 12 (énnoncé)
+            if 6 <= size_board <= 12:
+                self.root.destroy()  # ferme la fenêtre tkinter de config car plus nécessaire
+                # on crée une instance de la classe Game
+                game = Game(size_board)
+                game.run()  # on lance la game
             else:
                 messagebox.showerror(
-                    "Erreur", "La taille du plateau doit être entre 6 et 12.")
+                    "Erreur", "La size du board doit être entre 6 et 12.")
         except ValueError:
-            messagebox.showerror("Erreur", "Veuillez entrer un nombre valide.")
+            messagebox.showerror("Erreur", "Veuillez entrer un number correct.")
