@@ -7,7 +7,7 @@ class Board:
     def __init__(self, size, players):
         self.size = size
         self.board = [[(None, None) for _ in range(size)]
-                        for _ in range(size)]  # i = ligne, j = colonne
+                      for _ in range(size)]  # i = ligne, j = colonne
         self.initialise_board(players)
 
     def get_board(self):

@@ -2,6 +2,7 @@ from src.game import Game
 import tkinter as tk
 from tkinter import messagebox
 
+
 class Loader:
     """
     Classe Loader représente le GUI de configuration du jeu avant de lancer une partie.
@@ -21,7 +22,8 @@ class Loader:
         self.entry_size = tk.Entry(self.root)
         self.entry_size.insert(0, "8")
         self.entry_size.pack(pady=10)
-        tk.Button(self.root, text="Charger", command=self.load_game).pack(pady=10)
+        tk.Button(self.root, text="Charger",
+                  command=self.load_game).pack(pady=10)
 
     def load_game(self):
         """
@@ -35,9 +37,11 @@ class Loader:
                 game.run()
                 self.ask_replay()
             else:
-                messagebox.showerror("Erreur", "La taille du board doit être entre 6 et 12.")
+                messagebox.showerror(
+                    "Erreur", "La taille du board doit être entre 6 et 12.")
         except ValueError:
-            messagebox.showerror("Erreur", "Veuillez entrer un nombre correct.")
+            messagebox.showerror(
+                "Erreur", "Veuillez entrer un nombre correct.")
 
     def ask_replay(self):
         """
@@ -45,7 +49,7 @@ class Loader:
         ou 
         une fermerture de la fenêtre tkinter du jeu
         """
-        replay = messagebox.askyesno("Mini Echecs: Rejouer", "Voulez-vous rejouer ?")
+        replay = messagebox.askyesno(
+            "Mini Echecs: Rejouer", "Voulez-vous rejouer ?")
         if replay:
             self.__init__()
-

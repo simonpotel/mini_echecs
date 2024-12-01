@@ -78,8 +78,8 @@ class Game:
         if self.is_correct_move(self.round_player[1], (i, j)):
             board = self.board.get_board()
             board[i][j] = board[self.round_player[1][0]
-                                    # déplacer le piece
-                                    ][self.round_player[1][1]]
+                                # déplacer le piece
+                                ][self.round_player[1][1]]
             board[self.round_player[1][0]][self.round_player[1][1]] = (
                 None, None)  # vider la case de départ
             # delete les moves prévisualisés
@@ -128,8 +128,8 @@ class Game:
                     # show le player gagnant
                     replay = self.render.manage_end_game(self.round_player[0])
                     self.render.root.destroy()
-                    return 
-                
+                    return
+
                 # delete les moves prévisualisés
                 self.render.delete_prev()
         else:
@@ -157,7 +157,7 @@ class Game:
                         piece_type_msg = "une tower"
 
                 self.render.label_instruction.config(text=f"Vous avez sélectionné {
-                                                    piece_type_msg} ({i}, {j})")
+                    piece_type_msg} ({i}, {j})")
                 self.round_player[1] = (i, j)
 
                 self.render.show_player_selection(i, j)
@@ -209,7 +209,7 @@ class Game:
             print("Player 1 a gagné")
             return True
         return False
-    
+
     def run(self):
         """
         procédure : lance le game et met à jour le game tkinter

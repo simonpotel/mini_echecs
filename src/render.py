@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 
+
 class Render:
     """
     class Render : gère l'interface graphique du game avec tkinter et les événements de clic sur le canvas
@@ -12,6 +13,7 @@ class Render:
         "queen_player_2": "orange",
         "towers_player_2": "red"
     }
+
     def __init__(self, game):
         self.game = game
         self.root = tk.Tk()  # fenêtre principale tkinter
@@ -192,4 +194,5 @@ class Render:
         self.label_round_player.config(
             text=f"Player {winner + 1} a gagné !", font=("Helvetica, 20"))
         self.canvas.unbind("<Button-1>")
-        messagebox.showinfo("Fin de partie", f"Le joueur {winner + 1} a gagné !")
+        messagebox.showinfo("Fin de partie", f"Le joueur {
+                            winner + 1} a gagné !")
