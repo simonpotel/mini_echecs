@@ -10,7 +10,7 @@ class Loader:
 
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("Echecs: Loader")
+        self.root.title("Mini-Échecs: Loader")
         self.setup_initial_ui()
         self.root.mainloop()
 
@@ -50,6 +50,6 @@ class Loader:
         une fermerture de la fenêtre tkinter du jeu
         """
         replay = messagebox.askyesno(
-            "Echecs: Loader", "Do you want to replay a new game ?")
+            "Mini-Échecs: Loader", "Do you want to replay a new game ?")
         if replay:
             self.__init__()
