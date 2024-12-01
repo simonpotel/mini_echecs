@@ -101,7 +101,7 @@ class Game:
         if case[0] is None:  # case vide (aucun piece)
             if self.round_player[1] == (None, None):  # aucun piece selectionné
                 self.render.label_instruction.config(
-                    text="Vous devez sélectionner un de vos pieces avant de bouger.")
+                    text="Please select a piece before moving.")
                 return
             else:  # piece selectionné
                 # bouger le piece du player vers cette case vide
@@ -137,7 +137,7 @@ class Game:
             if self.round_player[0] != case[1]:
                 # on ne peut pas sélectionner un piece qui n'est pas le notre
                 self.render.label_instruction.config(
-                    text="Ce n'est pas votre piece.")
+                    text="This piece is not yours.")
                 return
             else:  # la case a un piece qui apgament au player
                 if self.get_moves_possibles(i, j) == []:  # aucun move possible
@@ -145,7 +145,7 @@ class Game:
                         self.round_player[1] = (None, None)
                         self.render.delete_prev()
                     self.render.label_instruction.config(
-                        text="Aucun mouvement possible pour cette pièce.")
+                        text="No possible moves for this piece.")
                     return
                 # on remplace l'ancienne selection par la nouvelle
                 match case[0]:
@@ -156,7 +156,7 @@ class Game:
                     case 2:  # tower
                         piece_type_msg = "une tower"
 
-                self.render.label_instruction.config(text=f"Vous avez sélectionné {
+                self.render.label_instruction.config(text=f"You have selected the piece {
                     piece_type_msg} ({i}, {j})")
                 self.round_player[1] = (i, j)
 

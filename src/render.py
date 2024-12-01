@@ -21,7 +21,7 @@ class Render:
         self.root.geometry("800x800")  # size de la fenêtre
         self.canvas_width = 600  # height du board
         self.canvas_height = 600  # width du board
-        self.label_instruction = tk.Label(self.root, text="À vous de jouer :", font=(
+        self.label_instruction = tk.Label(self.root, text="Your turn to play :", font=(
             "Roboto, 15"))  # label tkinter instruction de game
         self.label_instruction.pack(pady=(10, 0))  # margin top 10
         self.label_round_player = tk.Label(self.root, text="Player 1", font=(
@@ -39,7 +39,7 @@ class Render:
         """
 
         self.label_instruction.config(
-            text="À vous de jouer !", font=("Helvetica, 15"))
+            text="Your turn to play :", font=("Helvetica, 15"))
         self.label_round_player.config(
             text=f"Player {self.game.round_player[0] + 1}")
 
@@ -190,9 +190,8 @@ class Render:
         procédure: affiche un message de victoire pour le player gagnant
         """
         self.label_instruction.config(
-            text=f"Le player {winner + 1} a gagné !", font=("Helvetica, 15"))
+            text=f"Player {winner + 1} won the game!", font=("Helvetica, 15"))
         self.label_round_player.config(
-            text=f"Player {winner + 1} a gagné !", font=("Helvetica, 20"))
+            text=f"Player {winner + 1} won the game!", font=("Helvetica, 20"))
         self.canvas.unbind("<Button-1>")
-        messagebox.showinfo("Fin de partie", f"Le joueur {
-                            winner + 1} a gagné !")
+        messagebox.showinfo("End Game", f"Player {winner + 1} won the game!")
