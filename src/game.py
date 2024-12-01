@@ -127,8 +127,9 @@ class Game:
                     # condition de sortie
                     for x, y in [rectangle_sommets[1], rectangle_sommets[3]]:
                         if board[x][y][1] != self.round_player[0] and board[x][y][1] is not None:
-                            self.players[board[x][y][1]].loose_tower()
-                            board[x][y] = (None, None)
+                            if board[x][y][0] == 2:
+                                self.players[board[x][y][1]].loose_tower()
+                                board[x][y] = (None, None)
 
                 if self.check_win():  # vérifier si un player a gagné
                     # show le player gagnant
