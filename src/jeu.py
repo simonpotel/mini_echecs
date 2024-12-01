@@ -156,9 +156,6 @@ class Jeu:
                 self.rendu.label_instruction.config(text=f"Vous avez sélectionné {
                                                     pion_type_msg} ({i}, {j})")
                 self.tour_joueur[1] = (i, j)
-                largeur_cellule = self.rendu.canvas_width / self.plateau.get_taille()
-                hauteur_cellule = self.rendu.canvas_height / self.plateau.get_taille()
-                margin = 10
 
                 self.rendu.afficher_selection_joueur(i, j)
                 return
