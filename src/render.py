@@ -1,5 +1,5 @@
 import tkinter as tk
-
+from tkinter import messagebox
 
 class Render:
     """
@@ -177,3 +177,14 @@ class Render:
             # draw le move possible
             self.canvas.create_rectangle(
                 x0, y0, x1, y1, tags="prev")
+
+    def manage_end_game(self, winner):
+        """
+        procédure: affiche un message de victoire pour le player gagnant
+        """
+        self.label_instruction.config(
+            text=f"Le player {winner + 1} a gagné !", font=("Helvetica, 15"))
+        self.label_round_player.config(
+            text=f"Player {winner + 1} a gagné !", font=("Helvetica, 20"))
+        self.canvas.unbind("<Button-1>")
+        messagebox.showinfo("Fin de partie", f"Le joueur {winner + 1} a gagné !")

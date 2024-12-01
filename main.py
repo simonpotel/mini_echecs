@@ -1,6 +1,4 @@
-from src.config import PreConfig
-
+from src.loader import Loader
 
 if __name__ == "__main__":
-    config = PreConfig()
-    config.load_gui_config()
+    config = Loader()

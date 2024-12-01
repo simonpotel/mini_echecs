@@ -133,8 +133,10 @@ class Game:
 
                 if self.check_win():  # vérifier si un player a gagné
                     # show le player gagnant
-                    self.render.label_round_player.config(
-                        text="Victoire pour le player " + str(self.round_player[0] + 1))
+                    replay = self.render.manage_end_game(self.round_player[0])
+                    self.render.root.destroy()
+                    return 
+                
                 # delete les moves prévisualisés
                 self.render.delete_prev()
         else:
@@ -214,7 +216,7 @@ class Game:
             print("Player 1 a gagné")
             return True
         return False
-
+    
     def run(self):
         """
         procédure : lance le game et met à jour le game tkinter
