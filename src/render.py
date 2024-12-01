@@ -10,7 +10,7 @@ class Render:
     def __init__(self, game):
         self.game = game
         self.root = tk.Tk()  # fenêtre principale tkinter
-        self.root.title("Mini Echecs: Game")  # titre de la fenêtre
+        self.root.title("Echecs")  # titre de la fenêtre
         self.root.geometry("800x800")  # size de la fenêtre
         self.canvas_width = 600  # height du board
         self.canvas_height = 600  # width du board
