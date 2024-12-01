@@ -146,6 +146,9 @@ class Game:
                 return
             else:  # la case a un piece qui apgament au player
                 if self.get_moves_possibles(i, j) == []:  # aucun move possible
+                    if self.round_player[1] != (None, None):
+                        self.round_player[1] = (None, None)
+                        self.render.delete_prev()
                     self.render.label_instruction.config(
                         text="Aucun mouvement possible pour cette pièce.")
                     return
