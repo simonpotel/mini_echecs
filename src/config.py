@@ -33,7 +33,8 @@ class PreConfig:
         self.entry_taille.pack(pady=10)
 
         self.bouton_charger = tk.Button(
-            self.root, text="Charger", command=self.charger_partie) # event quand on clique sur le bouton
+            # event quand on clique sur le bouton
+            self.root, text="Charger", command=self.charger_partie)
         self.bouton_charger.pack(pady=10)
 
         self.root.mainloop()
@@ -41,10 +42,12 @@ class PreConfig:
     def charger_partie(self):
         try:
             taille_plateau = int(self.entry_taille.get())
-            if 6 <= taille_plateau <= 12: # taille comprise entre 6 et 12 (énnoncé)
-                self.root.destroy() # ferme la fenêtre tkinter de configuration car plus nécessaire
-                jeu = Jeu(taille_plateau) # on crée une instance de la classe Jeu
-                jeu.run() # on lance la partie
+            # taille comprise entre 6 et 12 (énnoncé)
+            if 6 <= taille_plateau <= 12:
+                self.root.destroy()  # ferme la fenêtre tkinter de configuration car plus nécessaire
+                # on crée une instance de la classe Jeu
+                jeu = Jeu(taille_plateau)
+                jeu.run()  # on lance la partie
             else:
                 messagebox.showerror(
                     "Erreur", "La taille du plateau doit être entre 6 et 12.")

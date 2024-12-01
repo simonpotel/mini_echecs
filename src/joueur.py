@@ -3,6 +3,7 @@ class Joueur:
     class Joueur : représente un joueur
     avec ses coordonnées de reine et le nombre de tours restants
     """
+
     def __init__(self):
         self.coordonnees_reine = (None, None)
         self.tours_restantes = None
@@ -13,8 +14,8 @@ class Joueur:
     def perdre_tour(self):
         self.tours_restantes -= 1
 
-    def set_coordonnees_reine(self, x, y):
-        self.coordonnees_reine = (x, y)
+    def set_coordonnees_reine(self, coords):
+        self.coordonnees_reine = coords
 
     def get_coordonnees_reine(self):
         return self.coordonnees_reine
