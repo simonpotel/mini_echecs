@@ -8,12 +8,7 @@ class Game:
     class Game : représente le mini game d'échecs avec les règles et les composants du game.
     """
 
-    ref_colors = {
-        "queen_player_1": "purple",
-        "towers_player_1": "blue",
-        "queen_player_2": "orange",
-        "towers_player_2": "red"
-    }
+
 
     def __init__(self, size_board):
         """

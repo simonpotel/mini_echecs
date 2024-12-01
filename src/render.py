@@ -6,7 +6,12 @@ class Render:
     class Render : gère l'interface graphique du game avec tkinter et les événements de clic sur le canvas
     pour le déplacement des pieces et le déroulement du game.
     """
-
+    ref_colors = {
+        "queen_player_1": "purple",
+        "towers_player_1": "blue",
+        "queen_player_2": "orange",
+        "towers_player_2": "red"
+    }
     def __init__(self, game):
         self.game = game
         self.root = tk.Tk()  # fenêtre principale tkinter
@@ -75,11 +80,11 @@ class Render:
                 if piece is not None:  # si la case contient un piece
                     if piece == 1:  # queen
                         # color de la queen en fonction du player
-                        color = self.game.ref_colors[f"queen_player_{
+                        color = self.ref_colors[f"queen_player_{
                             player + 1}"]
                     elif piece == 2:  # tower
                         # color de la tower en fonction du player
-                        color = self.game.ref_colors[f"towers_player_{
+                        color = self.ref_colors[f"towers_player_{
                             player + 1}"]
                     # draw le piece sur le canvas
                     piece = self.canvas.create_oval(x, y, w, h, fill=color)
