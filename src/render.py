@@ -102,7 +102,7 @@ class Render:
         self.canvas.create_oval(j * width_cell + margin - 5,
                                 i * height_cell + margin - 5,
                                 (j + 1) * width_cell - margin + 5,
-                                (i + 1) * height_cell - margin + 5, outline="green", width=2)
+                                (i + 1) * height_cell - margin + 5, outline="green", width=2, tags="prev")
 
         for x in range(size):
             for y in range(size):
