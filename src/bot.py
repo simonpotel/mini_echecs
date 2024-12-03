@@ -33,8 +33,7 @@ class Bot:
             if self.game.check_win():  # vérifier si le bot a gagné
                 # show le player gagnant
                 self.game.render.update_tkinter()
-                replay = self.game.render.manage_end_game(self.game.round_player[0])
-                self.game.render.root.destroy()
+                self.game.render.manage_end_game(self.game.round_player[0])
                 return
             else:
                 self.game.round_player[1] = (None, None)

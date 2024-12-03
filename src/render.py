@@ -140,7 +140,6 @@ class Render:
 
         self.canvas.delete("all")  # delete le canvas
         # delete les moves prévisualisés
-        self.delete_prev()
         self.draw_game()  # redraw le game
         # event click sur le canvas
         self.canvas.bind("<Button-1>", self.event_click_canvas)
@@ -194,4 +193,7 @@ class Render:
         self.label_round_player.config(
             text=f"Player {winner + 1} won the game!", font=("Helvetica, 20"))
         self.canvas.unbind("<Button-1>")
+        # forcer le rendu des derniers changements tkinter sur le canvas
+        self.game.render.root.update_idletasks()
         messagebox.showinfo("End Game", f"Player {winner + 1} won the game!")
+        self.root.destroy()

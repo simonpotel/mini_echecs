@@ -118,8 +118,7 @@ class Game:
                 if self.check_win():  # vérifier si un player a gagné
                     # show le player gagnant
                     self.render.update_tkinter()
-                    replay = self.render.manage_end_game(self.round_player[0])
-                    self.render.root.destroy()
+                    self.render.manage_end_game(self.round_player[0])
                     return
 
                 # delete les moves prévisualisés
