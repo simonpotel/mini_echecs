@@ -22,6 +22,10 @@ class Loader:
         self.entry_size = tk.Entry(self.root)
         self.entry_size.insert(0, "8")
         self.entry_size.pack(pady=10)
+        
+        self.bot_game_var = tk.BooleanVar()
+        tk.Checkbutton(self.root, text="Bot Game", variable=self.bot_game_var).pack(pady=10)
+        
         tk.Button(self.root, text="Load Game",
                   command=self.load_game).pack(pady=10)
 
@@ -31,9 +35,10 @@ class Loader:
         """
         try:
             size_board = int(self.entry_size.get())
+            bot_game = self.bot_game_var.get()
             if 6 <= size_board <= 12:
                 self.root.destroy()
-                game = Game(size_board)
+                game = Game(size_board, bot_game)
                 game.run()
                 self.ask_replay()
             else:

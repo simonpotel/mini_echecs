@@ -1,6 +1,7 @@
 from src.player import Player
 from src.board import Board
 from src.render import Render
+from src.bot import Bot
 
 
 class Game:
@@ -8,7 +9,7 @@ class Game:
     class Game : représente le mini game d'échecs avec les règles et les composants du game.
     """
 
-    def __init__(self, size_board):
+    def __init__(self, size_board, bot_game):
         """
         procédure: initialise les composants du game et l'interface graphique.
         """
@@ -18,6 +19,9 @@ class Game:
         # [player_current, piece_selectionne(x, y)]
         self.round_player = [0, (None, None)]
         self.render = Render(self)  # render graphique Tkinter du game
+        # true si le jeu est en mode bot sinon false, on considère le joueur 2 comme le bot si bot_game est True
+        self.bot_game = bot_game
+        self.bot = None if not bot_game else Bot(game=self)
 
     def is_correct_move(self, start, end):
         """
@@ -108,26 +112,13 @@ class Game:
                 if not self.move_piece(i, j):
                     return
 
-                queen_coords = self.players[self.round_player[0]
-                                            ].get_coords_queen()
-                if i != queen_coords[0] and j != queen_coords[1]:
-                    rectangle_sommets = [
-                        (i, j),
-                        (i, queen_coords[1]),
-                        queen_coords,
-                        (queen_coords[0], j)
-                    ]  # rectangle formé par les 4 sommets
-                    # condition de sortie
-                    for x, y in [rectangle_sommets[1], rectangle_sommets[3]]:
-                        if board[x][y][1] != self.round_player[0] and board[x][y][1] is not None:
-                            if board[x][y][0] == 2:
-                                self.players[board[x][y][1]].loose_tower()
-                                board[x][y] = (None, None)
+                # conditions de sorties des pions adverses
+                self.handle_captures(i, j)
 
                 if self.check_win():  # vérifier si un player a gagné
                     # show le player gagnant
-                    replay = self.render.manage_end_game(self.round_player[0])
-                    self.render.root.destroy()
+                    self.render.update_tkinter()
+                    self.render.manage_end_game(self.round_player[0])
                     return
 
                 # delete les moves prévisualisés
@@ -168,6 +159,30 @@ class Game:
         # définition du tower du player suivant
         self.round_player[0] = 0 if self.round_player[0] == 1 else 1
         self.render.update_tkinter()  # mettre à jour le game tkinter
+
+        if self.bot_game and self.round_player[0] == 1:
+            self.bot.play()
+
+    def handle_captures(self, i, j):
+        """
+        méthode: gère la capture des pions dans le rectangle formé par la reine et la pièce déplacée
+        """
+        board = self.board.get_board()
+        queen_coords = self.players[self.round_player[0]].get_coords_queen()
+        if i != queen_coords[0] and j != queen_coords[1]:
+            rectangle_sommets = [
+                (i, j),
+                (i, queen_coords[1]),
+                queen_coords,
+                (queen_coords[0], j)
+            ]  # rectangle formé par les 4 sommets
+
+            # conditions de sorties des pions adverses
+            for x, y in [rectangle_sommets[1], rectangle_sommets[3]]:
+                if board[x][y][1] != self.round_player[0] and board[x][y][1] is not None:
+                    if board[x][y][0] == 2:
+                        self.players[board[x][y][1]].loose_tower()
+                        board[x][y] = (None, None)
 
     def get_moves_possibles(self, i, j):
         """
