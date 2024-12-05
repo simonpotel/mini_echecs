@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+from PIL import Image, ImageTk
 
 
 class Render:
@@ -35,7 +36,38 @@ class Render:
             # canvas tkinter pour draw le board
             self.root, width=self.canvas_width, height=self.canvas_height)
         self.canvas.pack(pady=(10, 0))  # margin top 10
+        self.load_images()
         self.draw_game()  # dessine le board
+
+    def load_images(self):
+        """
+        procédure: charge les images des pièces et les redimensionne pour s'adapter aux cellules du board.
+        """
+        self.images = {}
+        size = self.game.board.get_size()
+        height_cell = self.canvas_height // size
+
+        pieces = ["queen", "tower"] # liste des pièces
+        max_height = 0
+        piece_images = {}
+
+        for piece in pieces:  # pour chaque pièce
+            for player in [0, 1]: # pour chaque player
+                # chargement de l'image qu'on utilisera sur le canvas
+                image_path = f"assets/chess/{player}_{piece}.png"
+                image = Image.open(image_path)
+                piece_images[f"{piece}_player_{player + 1}"] = image
+                if image.height > max_height: # si la hauteur de l'image est supérieure à la hauteur maximale trouvée
+                    max_height = image.height # on définit la taille maximale des images
+
+        ratio = height_cell / max_height # ratio de redimensionnement pour fait fit les images dans les cellules
+
+        # redimensionnement des images avec le ratio
+        for key, image in piece_images.items():
+            width = int(image.width * ratio)
+            height = int(image.height * ratio)
+            resized_image = image.resize((width, height), Image.LANCZOS)
+            self.images[key] = ImageTk.PhotoImage(resized_image)
 
     def draw_game(self):
         """
@@ -66,24 +98,23 @@ class Render:
                 # couleur de la case
                 color = "#EDEED2" if (i + j) % 2 == 0 else "#759656"
                 # draw la cell dans le rectangle x, y, w, h
-                rect = self.canvas.create_rectangle(x, y, w, h, outline="", fill=color)
+                rect = self.canvas.create_rectangle(
+                    x, y, w, h, outline="", fill=color)
                 self.canvas.tag_bind(
                     # event click sur la cell
                     rect, '<Button-1>', lambda event, i=i, j=j: self.game.event_click_piece(i, j))
                 if piece is not None:  # si la case contient un piece
                     if piece == 1:  # queen
-                     # color de la queen en fonction du player
-                     color = self.ref_colors[f"queen_player_{player + 1}"]
+                        image = self.images[f"queen_player_{player + 1}"]
                     elif piece == 2:  # tower
-                        # color de la tower en fonction du player
-                        color = self.ref_colors[f"towers_player_{player + 1}"]
-                        # draw le piece sur le canvas
-                    piece = self.canvas.create_oval(x + margin, y + margin, w - margin, h - margin, fill=color)
+                        image = self.images[f"tower_player_{player + 1}"]
+                    # draw le piece sur le canvas
+                    image_id = self.canvas.create_image(
+                        x + width_cell // 2, y + height_cell // 2, image=image)
                     # event click sur un piece
                     self.canvas.tag_bind(
-                    piece, '<Button-1>', lambda event, i=i, j=j: self.game.event_click_piece(i, j))
-                    
-        
+                        image_id, '<Button-1>', lambda _, i=i, j=j: self.game.event_click_piece(i, j))
+
         for i in range(size + 1):
             # lines horizontales
             self.canvas.create_line(width_border, i * height_cell, self.canvas_width,
@@ -139,7 +170,7 @@ class Render:
 
     def update_tkinter(self):
         """
-        procédure: met à jour l'interface Tkinter en effaçant et redessinant le canvas, 
+        procédure: met à jour l'interface Tkinter en effaçant et redessinant le canvas,
         et en liant l'événement de clic sur le canvas à une fonction de gestion des événements
         """
 
