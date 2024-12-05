@@ -90,7 +90,7 @@ class Game:
             board[self.round_player[1][0]][self.round_player[1][1]] = (
                 None, None)  # vider la case de départ
             # delete les moves prévisualisés
-            self.render.delete_prev()
+            self.render.update_tkinter()
             return True
         else:
             # le move n'est pas correct
@@ -123,9 +123,6 @@ class Game:
                     self.render.update_tkinter()
                     self.render.manage_end_game(self.round_player[0])
                     return
-
-                # delete les moves prévisualisés
-                self.render.delete_prev()
         else:
             # la case a un piece qui n'appartient pas au player
             if self.round_player[0] != case[1]:
@@ -137,7 +134,7 @@ class Game:
                 if self.get_moves_possibles(i, j) == []:  # aucun move possible
                     if self.round_player[1] != (None, None):
                         self.round_player[1] = (None, None)
-                        self.render.delete_prev()
+                        self.render.update_tkinter()
                     self.render.label_instruction.config(
                         text="No possible moves for this piece.")
                     return
@@ -223,10 +220,8 @@ class Game:
 
         # règles de win
         if pieces_player_1 < 3:
-            print("Player 2 a gagné")
             return True
         elif pieces_player_2 < 3:
-            print("Player 1 a gagné")
             return True
         return False
 
@@ -277,8 +272,6 @@ class Game:
         # bot game
         self.bot_game = game_state['bot_game']
         self.bot = None if not self.bot_game else Bot(game=self)
-
-        print(f"Save: '{self.game_name}' has been loaded.")
 
     def run(self):
         """
