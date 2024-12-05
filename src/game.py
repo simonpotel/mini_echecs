@@ -267,8 +267,10 @@ class Game:
         self.board.set_size(len(game_state['board']))
 
         # joueurs
-        for player_data, player in zip(game_state['players'], self.players):
-            player.set_coords_queen(tuple(player_data['coords_queen']))
+        for index in range(len(game_state['players'])):
+            player_data = game_state['players'][index]
+            player = self.players[index]
+            player.set_coords_queen((player_data['coords_queen'][0], player_data['coords_queen'][1]))
             player.set_towers_remains(player_data['towers_remains'])
 
         # round player
