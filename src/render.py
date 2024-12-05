@@ -53,6 +53,37 @@ class Render:
         margin = 10
         width_border = 2.5
 
+        # boucles qui dessinent les cells du board
+        for i in range(size):
+            for j in range(size):
+                piece, player = self.game.board.get_board()[i][j]
+                x = j * width_cell  # position x sur le board
+                y = i * height_cell  # position y sur le board
+                # width de la cell (width)
+                w = (j + 1) * width_cell
+                # height de la cell (height)
+                h = (i + 1) * height_cell
+                # couleur de la case
+                color = "#EDEED2" if (i + j) % 2 == 0 else "#759656"
+                # draw la cell dans le rectangle x, y, w, h
+                rect = self.canvas.create_rectangle(x, y, w, h, outline="", fill=color)
+                self.canvas.tag_bind(
+                    # event click sur la cell
+                    rect, '<Button-1>', lambda event, i=i, j=j: self.game.event_click_piece(i, j))
+                if piece is not None:  # si la case contient un piece
+                    if piece == 1:  # queen
+                     # color de la queen en fonction du player
+                     color = self.ref_colors[f"queen_player_{player + 1}"]
+                    elif piece == 2:  # tower
+                        # color de la tower en fonction du player
+                        color = self.ref_colors[f"towers_player_{player + 1}"]
+                        # draw le piece sur le canvas
+                    piece = self.canvas.create_oval(x + margin, y + margin, w - margin, h - margin, fill=color)
+                    # event click sur un piece
+                    self.canvas.tag_bind(
+                    piece, '<Button-1>', lambda event, i=i, j=j: self.game.event_click_piece(i, j))
+                    
+        
         for i in range(size + 1):
             # lines horizontales
             self.canvas.create_line(width_border, i * height_cell, self.canvas_width,
@@ -67,36 +98,6 @@ class Render:
         # ligne haute horizontale
         self.canvas.create_line(
             width_border, width_border, self.canvas_width, width_border)
-
-        # boucles qui dessinent les cells du board
-        for i in range(size):
-            for j in range(size):
-                piece, player = self.game.board.get_board()[i][j]
-                x = j * width_cell + margin  # position x sur le board
-                y = i * height_cell + margin  # position y sur le board
-                # width de la cell (width)
-                w = (j + 1) * width_cell - margin
-                # height de la cell (height)
-                h = (i + 1) * height_cell - margin
-                # draw la cell dans le rectangle x, y, w, h
-                rect = self.canvas.create_rectangle(x, y, w, h, outline="")
-                self.canvas.tag_bind(
-                    # event click sur la cell
-                    rect, '<Button-1>', lambda event, i=i, j=j: self.game.event_click_piece(i, j))
-                if piece is not None:  # si la case contient un piece
-                    if piece == 1:  # queen
-                        # color de la queen en fonction du player
-                        color = self.ref_colors[f"queen_player_{
-                            player + 1}"]
-                    elif piece == 2:  # tower
-                        # color de la tower en fonction du player
-                        color = self.ref_colors[f"towers_player_{
-                            player + 1}"]
-                    # draw le piece sur le canvas
-                    piece = self.canvas.create_oval(x, y, w, h, fill=color)
-                    # event click sur un piece
-                    self.canvas.tag_bind(
-                        piece, '<Button-1>', lambda event, i=i, j=j: self.game.event_click_piece(i, j))
 
     def show_player_selection(self, i, j):
         """
