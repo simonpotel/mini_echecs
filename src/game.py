@@ -194,7 +194,7 @@ class Game:
         méthode: retowerne une liste de tuples représentant les moves possibles pour une pièce donnée
         """
         size = self.board.get_size()
-        possible_moves = []
+        possible_moves = [] # liste des moves possibles pour cette pièce sur i,j
         for x in range(size):
             for y in range(size):
                 if self.is_correct_move((i, j), (x, y)):
@@ -255,9 +255,6 @@ class Game:
         méthode: charge l'état du jeu à partir d'un fichier JSON
         """
         file_path = f"saves/{self.game_name}.json"
-        if not os.path.exists(file_path):
-            print(f"Le fichier {file_path} n'existe pas.")
-            return
 
         with open(file_path, 'r') as file:
             game_state = json.load(file)

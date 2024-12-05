@@ -15,8 +15,9 @@ class Bot:
         best_move = None
         max_captures = -1
 
-        for i in range(size):
-            for j in range(size):
+        for i in range(size): # pour chaque ligne du board
+            for j in range(size): # pour chaque colonne du board
+                # pour chaque pion du board
                 if board[i][j][1] == 1:  # si c'est une pièce du bot
                     # récupérer les moves possibles pour le bot avec cette pièce
                     possible_moves = self.game.get_moves_possibles(i, j)
@@ -29,25 +30,28 @@ class Bot:
                             # on met à jour le meilleur move
                             best_move = (i, j, move[0], move[1])
 
-        if best_move is not None:
-            self.game.round_player[1] = (best_move[0], best_move[1])
-            self.game.move_piece(best_move[2], best_move[3])
+        if best_move is not None: # si un move a été trouvé (le meilleur parmis tous possibles)
+            self.game.round_player[1] = (best_move[0], best_move[1]) # on set les coordonnées de la pièce à déplacer
+            self.game.move_piece(best_move[2], best_move[3]) # on déplace la pièce
 
-            if board[best_move[2]][best_move[3]][0] == 1:
+            if board[best_move[2]][best_move[3]][0] == 1: # si la pièce déplacée est la reine
                 self.game.players[1].set_coords_queen(
-                    (best_move[2], best_move[3]))
+                    (best_move[2], best_move[3])) # on met à jour les coordonnées de la reine du bot
 
-            self.game.handle_captures(best_move[2], best_move[3])
+            self.game.handle_captures(best_move[2], best_move[3]) # on gère les captures des pièces adverses
             if self.game.check_win():  # vérifier si le bot a gagné
                 # show le player gagnant
                 self.game.render.update_tkinter()
                 self.game.render.manage_end_game(self.game.round_player[0])
                 return
             else:
+                # le bot n'a pas gagné, c'est au tour du player 1
+                # on met à jour le code pour le prochain tour
                 self.game.round_player[1] = (None, None)
                 self.game.round_player[0] = 0
                 self.game.render.update_tkinter()
         else:
+            # le bot ne peut pas jouer donc par convention c'est au player 1 de jouer (pour eviter de freeze la game)
             self.game.render.label_instruction.config(
                 text="Bot cannot make a move.")
             self.game.round_player[1] = (None, None)
@@ -59,10 +63,10 @@ class Bot:
         méthode: simule un mouvement et compte le nombre de pièces capturées
         """
         board = self.game.board.get_board()
-        temp_board = [row[:] for row in board]  # copier le board
+        temp_board = [row[:] for row in board]  # copier le board pour ne pas modifier l'original
 
         temp_board[end[0]][end[1]] = temp_board[start[0]
-                                                # déplacer la pièce
+                                                # déplacer la pièce à la nouvelle position pour simuler le mouvement
                                                 ][start[1]]
         # supprimer la pièce de l'ancienne position
         temp_board[start[0]][start[1]] = (None, None)

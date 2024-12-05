@@ -8,18 +8,18 @@ class Board:
         self.size = size
         self.board = [[(None, None) for _ in range(size)]
                       for _ in range(size)]  # i = ligne, j = colonne
-        self.initialise_board(players)
+        self.initialise_board(players) 
 
-    def get_board(self):
+    def get_board(self): # getter 
         return self.board
 
-    def set_board(self, board):
+    def set_board(self, board): # setter
         self.board = board
 
-    def get_size(self):
+    def get_size(self): # getter
         return self.size
 
-    def set_size(self, size):
+    def set_size(self, size): # setter
         self.size = size
 
     def initialise_board(self, players):
@@ -39,7 +39,7 @@ class Board:
         # 1 = queen / 2 = tower // 0 = player 1 / 1 = player 2
         self.board[self.size-1][0] = (1, 0)  # queen player 1
         self.board[0][self.size-1] = (1, 1)  # queen player 2
-        players[0].set_towers_remains(pieces_number)
-        players[0].set_coords_queen((self.size-1, 0))
-        players[1].set_towers_remains(pieces_number)
-        players[1].set_coords_queen((0, self.size-1))
+        players[0].set_towers_remains(pieces_number) # set le number de towers restants pour chaque player
+        players[0].set_coords_queen((self.size-1, 0)) # set les coordonnées de la queen pour chaque player
+        players[1].set_towers_remains(pieces_number) # set le number de towers restants pour chaque player
+        players[1].set_coords_queen((0, self.size-1))  # set les coordonnées de la queen pour chaque player

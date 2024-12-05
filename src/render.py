@@ -14,9 +14,9 @@ class Render:
         "towers_player_2": "red"
     }
 
-    def __init__(self, game, bot_game=False):
+    def __init__(self, game):
         self.game = game
-        self.bot_game = bot_game
+        self.bot_game = self.game.bot_game
         self.root = tk.Tk()  # fenêtre principale tkinter
         self.root.title("Mini-Échecs")  # titre de la fenêtre
         self.root.geometry("800x800")  # size de la fenêtre
@@ -178,12 +178,13 @@ class Render:
         """
         procédure: dessine les déplacements possibles sur le board de game
         """
+        board_size = self.game.board.get_size()
         for move in moves:  # pour chaque move possible (x, y)
             x, y = move
-            x0 = y * (self.canvas_width / self.game.board.get_size())
-            y0 = x * (self.canvas_height / self.game.board.get_size())
-            x1 = (y + 1) * (self.canvas_width / self.game.board.get_size())
-            y1 = (x + 1) * (self.canvas_height / self.game.board.get_size())
+            x0 = y * (self.canvas_width / board_size)
+            y0 = x * (self.canvas_height / board_size)
+            x1 = (y + 1) * (self.canvas_width / board_size)
+            y1 = (x + 1) * (self.canvas_height / board_size)
             # draw le move possible
             self.canvas.create_rectangle(
                 x0, y0, x1, y1, tags="prev")
