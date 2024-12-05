@@ -2,6 +2,8 @@ from src.player import Player
 from src.board import Board
 from src.render import Render
 from src.bot import Bot
+import json
+import os
 
 
 class Game:
@@ -9,7 +11,7 @@ class Game:
     class Game : représente le mini game d'échecs avec les règles et les composants du game.
     """
 
-    def __init__(self, size_board, bot_game):
+    def __init__(self, size_board, bot_game, game_name):
         """
         procédure: initialise les composants du game et l'interface graphique.
         """
@@ -18,10 +20,11 @@ class Game:
         self.board = Board(size_board, self.players)
         # [player_current, piece_selectionne(x, y)]
         self.round_player = [0, (None, None)]
-        self.render = Render(self)  # render graphique Tkinter du game
+        self.render = None
         # true si le jeu est en mode bot sinon false, on considère le joueur 2 comme le bot si bot_game est True
         self.bot_game = bot_game
         self.bot = None if not bot_game else Bot(game=self)
+        self.game_name = game_name
 
     def is_correct_move(self, start, end):
         """
@@ -124,13 +127,13 @@ class Game:
                 # delete les moves prévisualisés
                 self.render.delete_prev()
         else:
-            # la case a un piece qui n'apgament pas au player
+            # la case a un piece qui n'appartient pas au player
             if self.round_player[0] != case[1]:
                 # on ne peut pas sélectionner un piece qui n'est pas le notre
                 self.render.label_instruction.config(
                     text="This piece is not yours.")
                 return
-            else:  # la case a un piece qui apgament au player
+            else:  # la case a un piece qui appartient au player
                 if self.get_moves_possibles(i, j) == []:  # aucun move possible
                     if self.round_player[1] != (None, None):
                         self.round_player[1] = (None, None)
@@ -152,6 +155,7 @@ class Game:
                 self.round_player[1] = (i, j)
 
                 self.render.show_player_selection(i, j)
+                self.save_game()
                 return
 
         # réinitialiser la case selectionnée pour le prochain player
@@ -162,6 +166,7 @@ class Game:
 
         if self.bot_game and self.round_player[0] == 1:
             self.bot.play()
+        self.save_game()
 
     def handle_captures(self, i, j):
         """
@@ -225,9 +230,59 @@ class Game:
             return True
         return False
 
+    def save_game(self):
+        """
+        méthode: sauvegarde l'état actuel du jeu dans un fichier JSON
+        """
+        game_state = {
+            'board': self.board.get_board(),
+            'round_player': self.round_player,
+            'bot_game': self.bot_game,
+            'players': [
+                {
+                    'coords_queen': player.get_coords_queen(),
+                    'towers_remains': player.get_towers_remains()
+                } for player in self.players
+            ]
+        }
+
+        os.makedirs("saves", exist_ok=True)
+        with open(f"saves/{self.game_name}.json", 'w') as file:
+            json.dump(game_state, file, indent=4)
+
+    def load_game(self):
+        """
+        méthode: charge l'état du jeu à partir d'un fichier JSON
+        """
+        file_path = f"saves/{self.game_name}.json"
+        if not os.path.exists(file_path):
+            print(f"Le fichier {file_path} n'existe pas.")
+            return
+
+        with open(file_path, 'r') as file:
+            game_state = json.load(file)
+
+        # board
+        self.board.set_board(game_state['board'])
+        self.board.set_size(len(game_state['board']))
+
+        # joueurs
+        for player_data, player in zip(game_state['players'], self.players):
+            player.set_coords_queen(tuple(player_data['coords_queen']))
+            player.set_towers_remains(player_data['towers_remains'])
+
+        # round player
+        self.round_player = game_state['round_player']
+
+        # bot game
+        self.bot_game = game_state['bot_game']
+        self.bot = None if not self.bot_game else Bot(game=self)
+
+        print(f"Save: '{self.game_name}' has been loaded.")
+
     def run(self):
         """
         procédure : lance le game et met à jour le game tkinter
         """
-        self.render.update_tkinter()  # mettre à jour le game tkinter
+        self.render = Render(self)  # render graphique Tkinter du game
         self.render.root.mainloop()  # lancer le game
