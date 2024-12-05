@@ -47,20 +47,21 @@ class Render:
         size = self.game.board.get_size()
         height_cell = self.canvas_height // size
 
-        pieces = ["queen", "tower"] # liste des pièces
+        pieces = ["queen", "tower"]  # liste des pièces
         max_height = 0
         piece_images = {}
 
         for piece in pieces:  # pour chaque pièce
-            for player in [0, 1]: # pour chaque player
+            for player in [0, 1]:  # pour chaque player
                 # chargement de l'image qu'on utilisera sur le canvas
                 image_path = f"assets/chess/{player}_{piece}.png"
                 image = Image.open(image_path)
                 piece_images[f"{piece}_player_{player + 1}"] = image
-                if image.height > max_height: # si la hauteur de l'image est supérieure à la hauteur maximale trouvée
-                    max_height = image.height # on définit la taille maximale des images
+                if image.height > max_height:  # si la hauteur de l'image est supérieure à la hauteur maximale trouvée
+                    max_height = image.height  # on définit la taille maximale des images
 
-        ratio = height_cell / max_height # ratio de redimensionnement pour fait fit les images dans les cellules
+        # ratio de redimensionnement pour fait fit les images dans les cellules
+        ratio = height_cell / max_height
 
         # redimensionnement des images avec le ratio
         for key, image in piece_images.items():
@@ -132,41 +133,47 @@ class Render:
 
     def show_player_selection(self, i, j):
         """
-        procédure: Affiche la sélection du player et les moves possibles sur le board.
+        procédure: colore la pièce selectionnée en rouge et affiche les déplacements possibles pour cette pièce
         """
 
-        # delete les moves prévisualisés auparavant
-        self.delete_prev()
+        # on redraw le jeu pour faire disparaitre les anciens chemins possibles et restauré la couleur des pièces originales
+        self.update_tkinter()
+
+        # calcul dimensions des cellules
         size = self.game.board.get_size()
         width_cell = self.canvas_width / size
         height_cell = self.canvas_height / size
-        margin = 10
 
-        self.canvas.create_oval(j * width_cell + margin - 5,
-                                i * height_cell + margin - 5,
-                                (j + 1) * width_cell - margin + 5,
-                                (i + 1) * height_cell - margin + 5, outline="green", width=2, tags="prev")
+        # coordonnées de la cellule sélectionnée dans le canvas
+        x0 = j * width_cell
+        y0 = i * height_cell
+        x1 = (j + 1) * width_cell
+        y1 = (i + 1) * height_cell
 
-        for x in range(size):
-            for y in range(size):
+        # applique la couleur rouge à la pièce sélectionnée
+        overlapping_items = self.canvas.find_overlapping(x0, y0, x1, y1)
+        for item in overlapping_items:
+            if self.canvas.type(item) == "rectangle":
+                self.canvas.itemconfig(item, fill="#D64933")
+                break
 
-                # si le move est correct
-                if self.game.is_correct_move((i, j), (x, y)):
-                    self.canvas.create_rectangle(  # draw le move possible
-                        y * width_cell + margin,
-                        x * height_cell + margin,
-                        (y + 1) * width_cell - margin,
-                        (x + 1) * height_cell - margin,
-                        outline="green", width=2, tags="prev"
-                    )
+        # recherche de tous les déplacements possibles pour CETTE pièce sélectionnée
+        possible_moves = self.game.get_moves_possibles(i, j)
 
-    def delete_prev(self):
-        """
-        procédure: efface les moves prévisualisés sur le canvas.
-        """
+        for move in possible_moves:
+            x, y = move
+            # coordonnées des cellules des déplacements possibles dans le canvas
+            x0 = y * width_cell
+            y0 = x * height_cell
+            x1 = (y + 1) * width_cell
+            y1 = (x + 1) * height_cell
 
-        # delete les moves prévisualisés
-        self.canvas.delete("prev")
+            # applique la couleur de background de cellule là où le déplacement est possible
+            overlapping_items = self.canvas.find_overlapping(x0, y0, x1, y1)
+            for item in overlapping_items:
+                if self.canvas.type(item) == "rectangle":
+                    self.canvas.itemconfig(item, fill="#F39B6D")
+                    break
 
     def update_tkinter(self):
         """
