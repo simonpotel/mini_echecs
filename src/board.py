@@ -13,8 +13,14 @@ class Board:
     def get_board(self):
         return self.board
 
+    def set_board(self, board):
+        self.board = board
+
     def get_size(self):
         return self.size
+
+    def set_size(self, size):
+        self.size = size
 
     def initialise_board(self, players):
         """

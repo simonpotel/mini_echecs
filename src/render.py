@@ -14,8 +14,9 @@ class Render:
         "towers_player_2": "red"
     }
 
-    def __init__(self, game):
+    def __init__(self, game, bot_game=False):
         self.game = game
+        self.bot_game = bot_game
         self.root = tk.Tk()  # fenêtre principale tkinter
         self.root.title("Mini-Échecs")  # titre de la fenêtre
         self.root.geometry("800x800")  # size de la fenêtre
@@ -27,6 +28,9 @@ class Render:
         self.label_round_player = tk.Label(self.root, text="Player 1", font=(
             "Roboto, 20"))  # label tkinter tower du player
         self.label_round_player.pack(pady=(0, 10))  # margin bottom 10
+        self.label_bot_game = tk.Label(self.root, text="Bot Game: Yes" if self.bot_game else "Bot Game: No", font=(
+            "Roboto, 15"))  # label tkinter pour indiquer si c'est un bot game
+        self.label_bot_game.pack(pady=(0, 10))  # margin bottom 10
         self.canvas = tk.Canvas(
             # canvas tkinter pour draw le board
             self.root, width=self.canvas_width, height=self.canvas_height)
