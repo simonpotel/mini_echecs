@@ -194,7 +194,7 @@ class Game:
         méthode: retowerne une liste de tuples représentant les moves possibles pour une pièce donnée
         """
         size = self.board.get_size()
-        possible_moves = [] # liste des moves possibles pour cette pièce sur i,j
+        possible_moves = []  # liste des moves possibles pour cette pièce sur i,j
         for x in range(size):
             for y in range(size):
                 if self.is_correct_move((i, j), (x, y)):
@@ -267,7 +267,8 @@ class Game:
         for index in range(len(game_state['players'])):
             player_data = game_state['players'][index]
             player = self.players[index]
-            player.set_coords_queen((player_data['coords_queen'][0], player_data['coords_queen'][1]))
+            player.set_coords_queen(
+                (player_data['coords_queen'][0], player_data['coords_queen'][1]))
             player.set_towers_remains(player_data['towers_remains'])
 
         # round player

@@ -15,8 +15,8 @@ class Bot:
         best_move = None
         max_captures = -1
 
-        for i in range(size): # pour chaque ligne du board
-            for j in range(size): # pour chaque colonne du board
+        for i in range(size):  # pour chaque ligne du board
+            for j in range(size):  # pour chaque colonne du board
                 # pour chaque pion du board
                 if board[i][j][1] == 1:  # si c'est une pièce du bot
                     # récupérer les moves possibles pour le bot avec cette pièce
@@ -30,15 +30,20 @@ class Bot:
                             # on met à jour le meilleur move
                             best_move = (i, j, move[0], move[1])
 
-        if best_move is not None: # si un move a été trouvé (le meilleur parmis tous possibles)
-            self.game.round_player[1] = (best_move[0], best_move[1]) # on set les coordonnées de la pièce à déplacer
-            self.game.move_piece(best_move[2], best_move[3]) # on déplace la pièce
+        # si un move a été trouvé (le meilleur parmis tous possibles)
+        if best_move is not None:
+            # on set les coordonnées de la pièce à déplacer
+            self.game.round_player[1] = (best_move[0], best_move[1])
+            # on déplace la pièce
+            self.game.move_piece(best_move[2], best_move[3])
 
-            if board[best_move[2]][best_move[3]][0] == 1: # si la pièce déplacée est la reine
+            if board[best_move[2]][best_move[3]][0] == 1:  # si la pièce déplacée est la reine
                 self.game.players[1].set_coords_queen(
-                    (best_move[2], best_move[3])) # on met à jour les coordonnées de la reine du bot
+                    # on met à jour les coordonnées de la reine du bot
+                    (best_move[2], best_move[3]))
 
-            self.game.handle_captures(best_move[2], best_move[3]) # on gère les captures des pièces adverses
+            # on gère les captures des pièces adverses
+            self.game.handle_captures(best_move[2], best_move[3])
             if self.game.check_win():  # vérifier si le bot a gagné
                 # show le player gagnant
                 self.game.render.update_tkinter()
@@ -63,7 +68,8 @@ class Bot:
         méthode: simule un mouvement et compte le nombre de pièces capturées
         """
         board = self.game.board.get_board()
-        temp_board = [row[:] for row in board]  # copier le board pour ne pas modifier l'original
+        # copier le board pour ne pas modifier l'original
+        temp_board = [row[:] for row in board]
 
         temp_board[end[0]][end[1]] = temp_board[start[0]
                                                 # déplacer la pièce à la nouvelle position pour simuler le mouvement
