@@ -199,7 +199,8 @@ class Render:
         height_cell = self.canvas_height / size
         i = int(y // height_cell)
         j = int(x // width_cell)
-        self.show_moves_possibles(i, j)
+        if i < size and j < size: # avoid un clic mistake sur la bordure du board
+            self.show_moves_possibles(i, j)
 
     def show_moves_possibles(self, i, j):
         """
