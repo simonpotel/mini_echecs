@@ -2,6 +2,7 @@ from src.player import Player
 from src.board import Board
 from src.render import Render
 from src.bot import Bot
+from src.sounds import Sounds
 import json
 import os
 
@@ -25,6 +26,7 @@ class Game:
         self.bot_game = bot_game
         self.bot = None if not bot_game else Bot(game=self)
         self.game_name = game_name
+        self.sounds = Sounds()
 
     def is_correct_move(self, start, end):
         """
@@ -116,7 +118,9 @@ class Game:
                     return
 
                 # conditions de sorties des pions adverses
-                self.handle_captures(i, j)
+                if not self.handle_captures(i, j): # si il n'y a pas eu de capture
+                    self.sounds.play_sound('sucess') # jouer le son de succès
+
 
                 if self.check_win():  # vérifier si un player a gagné
                     # show le player gagnant
@@ -153,6 +157,7 @@ class Game:
 
                 self.render.show_player_selection(i, j)
                 self.save_game()
+                self.sounds.play_sound('select')
                 return
 
         # réinitialiser la case selectionnée pour le prochain player
@@ -171,6 +176,7 @@ class Game:
         """
         board = self.board.get_board()
         queen_coords = self.players[self.round_player[0]].get_coords_queen()
+        captured = False
         if i != queen_coords[0] and j != queen_coords[1]:
             rectangle_sommets = [
                 (i, j),
@@ -185,6 +191,11 @@ class Game:
                     if board[x][y][0] == 2:
                         self.players[board[x][y][1]].loose_tower()
                         board[x][y] = (None, None)
+                        captured = True
+        if captured:
+            self.sounds.play_sound('loss')
+            return True 
+        return False 
 
     def get_moves_possibles(self, i, j):
         """
@@ -278,4 +289,5 @@ class Game:
         procédure : lance le game et met à jour le game tkinter
         """
         self.render = Render(self)  # render graphique Tkinter du game
+        self.sounds.play_sound('sucess')
         self.render.root.mainloop()  # lancer le game
