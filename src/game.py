@@ -27,7 +27,6 @@ class Game:
         self.bot = None if not bot_game else Bot(game=self)
         self.game_name = game_name
         self.sounds = Sounds()
-        self.sounds.play_sound('sucess')
 
     def is_correct_move(self, start, end):
         """
@@ -94,7 +93,6 @@ class Game:
                 None, None)  # vider la case de départ
             # delete les moves prévisualisés
             self.render.update_tkinter()
-            self.sounds.play_sound('sucess')
             return True
         else:
             # le move n'est pas correct
@@ -120,7 +118,9 @@ class Game:
                     return
 
                 # conditions de sorties des pions adverses
-                self.handle_captures(i, j)
+                if not self.handle_captures(i, j): # si il n'y a pas eu de capture
+                    self.sounds.play_sound('sucess') # jouer le son de succès
+
 
                 if self.check_win():  # vérifier si un player a gagné
                     # show le player gagnant
@@ -194,6 +194,8 @@ class Game:
                         captured = True
         if captured:
             self.sounds.play_sound('loss')
+            return True 
+        return False 
 
     def get_moves_possibles(self, i, j):
         """
