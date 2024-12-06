@@ -9,6 +9,9 @@ https://github.com/P1x3l11
 
 https://github.com/simonpotel
 
+## Rendu
+<img src="https://github.com/simonpotel/mini_echecs/blob/03f31ce4df2dcb384f4bdd3efe7f966401eac0b5/assets/render.png" width="456" height="470">
+
 ## Énnoncé
 
 ```
