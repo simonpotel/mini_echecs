@@ -1,6 +1,6 @@
 # Mini Échecs
 
-<img src="https://github.com/simonpotel/mini_echecs/blob/f56c4ca841b182559315f62d5da6c6a11919299f/assets/logo.jpg" width="200" height="200">
+<img src="https://github.com/simonpotel/mini_echecs/blob/03f31ce4df2dcb384f4bdd3efe7f966401eac0b5/assets/render.png" width="456" height="470">
 
 ---
 
@@ -8,9 +8,6 @@
 https://github.com/P1x3l11
 
 https://github.com/simonpotel
-
-## Rendu
-<img src="https://github.com/simonpotel/mini_echecs/blob/03f31ce4df2dcb384f4bdd3efe7f966401eac0b5/assets/render.png" width="456" height="470">
 
 ## Énnoncé
 
