@@ -49,4 +49,3 @@ class Board:
         players[1].set_towers_remains(created_towers)
         # set les coordonnées de la queen pour chaque player
         players[1].set_coords_queen((0, self.size-1))
-        print('Towers initied for each:',created_towers)
