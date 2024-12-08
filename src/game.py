@@ -176,6 +176,9 @@ class Game:
         méthode: gère la capture des pions dans le rectangle formé par la reine et la pièce déplacée
         """
         board = self.board.get_board()
+        moved_piece, _ = board[i][j]
+        if moved_piece != 2:  # vérifier si la pièce déplacée est une tour
+            return False
         queen_coords = self.players[self.round_player[0]].get_coords_queen()
         captured = False
         if i != queen_coords[0] and j != queen_coords[1]:
