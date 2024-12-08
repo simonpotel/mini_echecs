@@ -2,6 +2,9 @@ from src.player import Player
 from src.board import Board
 from src.render import Render
 from src.bot import Bot
+from src.sounds import Sounds
+import json
+import os
 
 
 class Game:
@@ -9,7 +12,7 @@ class Game:
     class Game : représente le mini game d'échecs avec les règles et les composants du game.
     """
 
-    def __init__(self, size_board, bot_game):
+    def __init__(self, size_board, bot_game, game_name):
         """
         procédure: initialise les composants du game et l'interface graphique.
         """
@@ -18,10 +21,13 @@ class Game:
         self.board = Board(size_board, self.players)
         # [player_current, piece_selectionne(x, y)]
         self.round_player = [0, (None, None)]
-        self.render = Render(self)  # render graphique Tkinter du game
+        self.render = None
         # true si le jeu est en mode bot sinon false, on considère le joueur 2 comme le bot si bot_game est True
         self.bot_game = bot_game
         self.bot = None if not bot_game else Bot(game=self)
+        self.game_name = game_name
+        self.play_sounds = True 
+        self.sounds = Sounds()
 
     def is_correct_move(self, start, end):
         """
@@ -87,11 +93,11 @@ class Game:
             board[self.round_player[1][0]][self.round_player[1][1]] = (
                 None, None)  # vider la case de départ
             # delete les moves prévisualisés
-            self.render.delete_prev()
+            self.render.update_tkinter()
             return True
         else:
             # le move n'est pas correct
-            self.render.label_instruction.config(text="Mouvement incorrect")
+            self.render.label_instruction.config(text="Incorrect move")
             return False
 
     def event_click_piece(self, i, j):
@@ -113,45 +119,46 @@ class Game:
                     return
 
                 # conditions de sorties des pions adverses
-                self.handle_captures(i, j)
+                if not self.handle_captures(i, j): # si il n'y a pas eu de capture
+                    if self.play_sounds.get(): self.sounds.play_sound('sucess') # jouer le son de succès
+
 
                 if self.check_win():  # vérifier si un player a gagné
                     # show le player gagnant
                     self.render.update_tkinter()
                     self.render.manage_end_game(self.round_player[0])
                     return
-
-                # delete les moves prévisualisés
-                self.render.delete_prev()
         else:
-            # la case a un piece qui n'apgament pas au player
+            # la case a un piece qui n'appartient pas au player
             if self.round_player[0] != case[1]:
                 # on ne peut pas sélectionner un piece qui n'est pas le notre
                 self.render.label_instruction.config(
                     text="This piece is not yours.")
                 return
-            else:  # la case a un piece qui apgament au player
+            else:  # la case a un piece qui appartient au player
                 if self.get_moves_possibles(i, j) == []:  # aucun move possible
                     if self.round_player[1] != (None, None):
                         self.round_player[1] = (None, None)
-                        self.render.delete_prev()
+                        self.render.update_tkinter()
                     self.render.label_instruction.config(
                         text="No possible moves for this piece.")
                     return
                 # on remplace l'ancienne selection par la nouvelle
                 match case[0]:
                     case 1:  # queen
-                        piece_type_msg = "votre queen"
+                        piece_type_msg = "your queen"
                         self.players[self.round_player[0]
                                      ].set_coords_queen((i, j))
                     case 2:  # tower
-                        piece_type_msg = "une tower"
+                        piece_type_msg = "a tower"
 
-                self.render.label_instruction.config(text=f"You have selected the piece {
+                self.render.label_instruction.config(text=f"You have selected {
                     piece_type_msg} ({i}, {j})")
                 self.round_player[1] = (i, j)
 
                 self.render.show_player_selection(i, j)
+                self.save_game()
+                if self.play_sounds.get(): self.sounds.play_sound('select')
                 return
 
         # réinitialiser la case selectionnée pour le prochain player
@@ -162,6 +169,7 @@ class Game:
 
         if self.bot_game and self.round_player[0] == 1:
             self.bot.play()
+        self.save_game()
 
     def handle_captures(self, i, j):
         """
@@ -169,6 +177,7 @@ class Game:
         """
         board = self.board.get_board()
         queen_coords = self.players[self.round_player[0]].get_coords_queen()
+        captured = False
         if i != queen_coords[0] and j != queen_coords[1]:
             rectangle_sommets = [
                 (i, j),
@@ -183,13 +192,18 @@ class Game:
                     if board[x][y][0] == 2:
                         self.players[board[x][y][1]].loose_tower()
                         board[x][y] = (None, None)
+                        captured = True
+        if captured:
+            if self.play_sounds.get(): self.sounds.play_sound('loss')
+            return True 
+        return False 
 
     def get_moves_possibles(self, i, j):
         """
         méthode: retowerne une liste de tuples représentant les moves possibles pour une pièce donnée
         """
         size = self.board.get_size()
-        possible_moves = []
+        possible_moves = []  # liste des moves possibles pour cette pièce sur i,j
         for x in range(size):
             for y in range(size):
                 if self.is_correct_move((i, j), (x, y)):
@@ -201,33 +215,66 @@ class Game:
         méthode : vérifie si un player a gagné la game 
         return True/False si un player a gagné ou non
         """
-        board = self.board.get_board()
-        size = self.board.get_size()
-        pieces_player_1 = 0
-        pieces_player_2 = 0
-
-        # permet de compter le number de pieces restants pour chaque player
-        for i in range(size):
-            for j in range(size):
-                piece, player = board[i][j]
-                if piece is not None:
-                    if player == 0:
-                        pieces_player_1 += 1
-                    else:
-                        pieces_player_2 += 1
 
         # règles de win
-        if pieces_player_1 < 3:
-            print("Player 2 a gagné")
+        if self.players[0].get_towers_remains() <= 1:
             return True
-        elif pieces_player_2 < 3:
-            print("Player 1 a gagné")
+        elif self.players[1].get_towers_remains() <= 1:
             return True
         return False
+
+    def save_game(self):
+        """
+        méthode: sauvegarde l'état actuel du jeu dans un fichier JSON
+        """
+        game_state = {
+            'board': self.board.get_board(),
+            'round_player': self.round_player,
+            'bot_game': self.bot_game,
+            'players': [
+                {
+                    'coords_queen': player.get_coords_queen(),
+                    'towers_remains': player.get_towers_remains()
+                } for player in self.players
+            ]
+        }
+
+        os.makedirs("saves", exist_ok=True)
+        with open(f"saves/{self.game_name}.json", 'w') as file:
+            json.dump(game_state, file, indent=4)
+
+    def load_game(self):
+        """
+        méthode: charge l'état du jeu à partir d'un fichier JSON
+        """
+        file_path = f"saves/{self.game_name}.json"
+
+        with open(file_path, 'r') as file:
+            game_state = json.load(file)
+
+        # board
+        self.board.set_board(game_state['board'])
+        self.board.set_size(len(game_state['board']))
+
+        # joueurs
+        for index in range(len(game_state['players'])):
+            player_data = game_state['players'][index]
+            player = self.players[index]
+            player.set_coords_queen(
+                (player_data['coords_queen'][0], player_data['coords_queen'][1]))
+            player.set_towers_remains(player_data['towers_remains'])
+
+        # round player
+        self.round_player = game_state['round_player']
+
+        # bot game
+        self.bot_game = game_state['bot_game']
+        self.bot = None if not self.bot_game else Bot(game=self)
 
     def run(self):
         """
         procédure : lance le game et met à jour le game tkinter
         """
-        self.render.update_tkinter()  # mettre à jour le game tkinter
+        self.render = Render(self)  # render graphique Tkinter du game
+        if self.play_sounds.get(): self.sounds.play_sound('sucess')
         self.render.root.mainloop()  # lancer le game

@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+from PIL import Image, ImageTk
 
 
 class Render:
@@ -16,22 +17,65 @@ class Render:
 
     def __init__(self, game):
         self.game = game
+        self.bot_game = self.game.bot_game
         self.root = tk.Tk()  # fenêtre principale tkinter
         self.root.title("Mini-Échecs")  # titre de la fenêtre
         self.root.geometry("800x800")  # size de la fenêtre
         self.canvas_width = 600  # height du board
         self.canvas_height = 600  # width du board
+        self.label_game_name = tk.Label(self.root, text=f'Game: {self.game.game_name}', font=(
+            "Roboto, 20"))
+        self.label_game_name.pack(pady=(10, 0))  # margin top 10
         self.label_instruction = tk.Label(self.root, text="Your turn to play :", font=(
             "Roboto, 15"))  # label tkinter instruction de game
         self.label_instruction.pack(pady=(10, 0))  # margin top 10
         self.label_round_player = tk.Label(self.root, text="Player 1", font=(
             "Roboto, 20"))  # label tkinter tower du player
         self.label_round_player.pack(pady=(0, 10))  # margin bottom 10
+        self.label_bot_game = tk.Label(self.root, text="Bot Game: Yes" if self.bot_game else "Bot Game: No", font=(
+            "Roboto, 15"))  # label tkinter pour indiquer si c'est un bot game
+        self.label_bot_game.pack(pady=(0, 10))  # margin bottom 10
         self.canvas = tk.Canvas(
             # canvas tkinter pour draw le board
             self.root, width=self.canvas_width, height=self.canvas_height)
         self.canvas.pack(pady=(10, 0))  # margin top 10
+        self.game.play_sounds = tk.BooleanVar(value=True)
+        self.checkbox_playsound = tk.Checkbutton(
+            self.root, text="Play Sounds", variable=self.game.play_sounds)
+        self.checkbox_playsound.pack(pady=(0, 10))
+        self.load_images()
         self.draw_game()  # dessine le board
+
+    def load_images(self):
+        """
+        procédure: charge les images des pièces et les redimensionne pour s'adapter aux cellules du board.
+        """
+        self.images = {}
+        size = self.game.board.get_size()
+        height_cell = self.canvas_height // size
+
+        pieces = ["queen", "tower"]  # liste des pièces
+        max_height = 0
+        piece_images = {}
+
+        for piece in pieces:  # pour chaque pièce
+            for player in [0, 1]:  # pour chaque player
+                # chargement de l'image qu'on utilisera sur le canvas
+                image_path = f"assets/chess/{player}_{piece}.png"
+                image = Image.open(image_path)
+                piece_images[f"{piece}_player_{player + 1}"] = image
+                if image.height > max_height:  # si la hauteur de l'image est supérieure à la hauteur maximale trouvée
+                    max_height = image.height  # on définit la taille maximale des images
+
+        # ratio de redimensionnement pour fait fit les images dans les cellules
+        ratio = height_cell / max_height
+
+        # redimensionnement des images avec le ratio
+        for key, image in piece_images.items():
+            width = int(image.width * ratio)
+            height = int(image.height * ratio)
+            resized_image = image.resize((width, height), Image.LANCZOS)
+            self.images[key] = ImageTk.PhotoImage(resized_image)
 
     def draw_game(self):
         """
@@ -49,6 +93,36 @@ class Render:
         margin = 10
         width_border = 2.5
 
+        # boucles qui dessinent les cells du board
+        for i in range(size):
+            for j in range(size):
+                piece, player = self.game.board.get_board()[i][j]
+                x = j * width_cell  # position x sur le board
+                y = i * height_cell  # position y sur le board
+                # width de la cell (width)
+                w = (j + 1) * width_cell
+                # height de la cell (height)
+                h = (i + 1) * height_cell
+                # couleur de la case
+                color = "#EDEED2" if (i + j) % 2 == 0 else "#759656"
+                # draw la cell dans le rectangle x, y, w, h
+                rect = self.canvas.create_rectangle(
+                    x, y, w, h, outline="", fill=color)
+                self.canvas.tag_bind(
+                    # event click sur la cell
+                    rect, '<Button-1>', lambda event, i=i, j=j: self.game.event_click_piece(i, j))
+                if piece is not None:  # si la case contient un piece
+                    if piece == 1:  # queen
+                        image = self.images[f"queen_player_{player + 1}"]
+                    elif piece == 2:  # tower
+                        image = self.images[f"tower_player_{player + 1}"]
+                    # draw le piece sur le canvas
+                    image_id = self.canvas.create_image(
+                        x + width_cell // 2, y + height_cell // 2, image=image)
+                    # event click sur un piece
+                    self.canvas.tag_bind(
+                        image_id, '<Button-1>', lambda _, i=i, j=j: self.game.event_click_piece(i, j))
+
         for i in range(size + 1):
             # lines horizontales
             self.canvas.create_line(width_border, i * height_cell, self.canvas_width,
@@ -64,77 +138,53 @@ class Render:
         self.canvas.create_line(
             width_border, width_border, self.canvas_width, width_border)
 
-        # boucles qui dessinent les cells du board
-        for i in range(size):
-            for j in range(size):
-                piece, player = self.game.board.get_board()[i][j]
-                x = j * width_cell + margin  # position x sur le board
-                y = i * height_cell + margin  # position y sur le board
-                # width de la cell (width)
-                w = (j + 1) * width_cell - margin
-                # height de la cell (height)
-                h = (i + 1) * height_cell - margin
-                # draw la cell dans le rectangle x, y, w, h
-                rect = self.canvas.create_rectangle(x, y, w, h, outline="")
-                self.canvas.tag_bind(
-                    # event click sur la cell
-                    rect, '<Button-1>', lambda event, i=i, j=j: self.game.event_click_piece(i, j))
-                if piece is not None:  # si la case contient un piece
-                    if piece == 1:  # queen
-                        # color de la queen en fonction du player
-                        color = self.ref_colors[f"queen_player_{
-                            player + 1}"]
-                    elif piece == 2:  # tower
-                        # color de la tower en fonction du player
-                        color = self.ref_colors[f"towers_player_{
-                            player + 1}"]
-                    # draw le piece sur le canvas
-                    piece = self.canvas.create_oval(x, y, w, h, fill=color)
-                    # event click sur un piece
-                    self.canvas.tag_bind(
-                        piece, '<Button-1>', lambda event, i=i, j=j: self.game.event_click_piece(i, j))
-
     def show_player_selection(self, i, j):
         """
-        procédure: Affiche la sélection du player et les moves possibles sur le board.
+        procédure: colore la pièce selectionnée en rouge et affiche les déplacements possibles pour cette pièce
         """
 
-        # delete les moves prévisualisés auparavant
-        self.delete_prev()
+        # on redraw le jeu pour faire disparaitre les anciens chemins possibles et restauré la couleur des pièces originales
+        self.update_tkinter()
+
+        # calcul dimensions des cellules
         size = self.game.board.get_size()
         width_cell = self.canvas_width / size
         height_cell = self.canvas_height / size
-        margin = 10
 
-        self.canvas.create_oval(j * width_cell + margin - 5,
-                                i * height_cell + margin - 5,
-                                (j + 1) * width_cell - margin + 5,
-                                (i + 1) * height_cell - margin + 5, outline="green", width=2, tags="prev")
+        # coordonnées de la cellule sélectionnée dans le canvas
+        x0 = j * width_cell
+        y0 = i * height_cell
+        x1 = (j + 1) * width_cell
+        y1 = (i + 1) * height_cell
 
-        for x in range(size):
-            for y in range(size):
+        # applique la couleur rouge à la pièce sélectionnée
+        overlapping_items = self.canvas.find_overlapping(x0, y0, x1, y1)
+        for item in overlapping_items:
+            if self.canvas.type(item) == "rectangle":
+                self.canvas.itemconfig(item, fill="#D64933")
+                break
 
-                # si le move est correct
-                if self.game.is_correct_move((i, j), (x, y)):
-                    self.canvas.create_rectangle(  # draw le move possible
-                        y * width_cell + margin,
-                        x * height_cell + margin,
-                        (y + 1) * width_cell - margin,
-                        (x + 1) * height_cell - margin,
-                        outline="green", width=2, tags="prev"
-                    )
+        # recherche de tous les déplacements possibles pour CETTE pièce sélectionnée
+        possible_moves = self.game.get_moves_possibles(i, j)
 
-    def delete_prev(self):
-        """
-        procédure: efface les moves prévisualisés sur le canvas.
-        """
+        for move in possible_moves:
+            x, y = move
+            # coordonnées des cellules des déplacements possibles dans le canvas
+            x0 = y * width_cell
+            y0 = x * height_cell
+            x1 = (y + 1) * width_cell
+            y1 = (x + 1) * height_cell
 
-        # delete les moves prévisualisés
-        self.canvas.delete("prev")
+            # applique la couleur de background de cellule là où le déplacement est possible
+            overlapping_items = self.canvas.find_overlapping(x0, y0, x1, y1)
+            for item in overlapping_items:
+                if self.canvas.type(item) == "rectangle":
+                    self.canvas.itemconfig(item, fill="#F39B6D")
+                    break
 
     def update_tkinter(self):
         """
-        procédure: met à jour l'interface Tkinter en effaçant et redessinant le canvas, 
+        procédure: met à jour l'interface Tkinter en effaçant et redessinant le canvas,
         et en liant l'événement de clic sur le canvas à une fonction de gestion des événements
         """
 
@@ -156,7 +206,8 @@ class Render:
         height_cell = self.canvas_height / size
         i = int(y // height_cell)
         j = int(x // width_cell)
-        self.show_moves_possibles(i, j)
+        if i < size and j < size: # avoid un clic mistake sur la bordure du board
+            self.show_moves_possibles(i, j)
 
     def show_moves_possibles(self, i, j):
         """
@@ -174,12 +225,13 @@ class Render:
         """
         procédure: dessine les déplacements possibles sur le board de game
         """
+        board_size = self.game.board.get_size()
         for move in moves:  # pour chaque move possible (x, y)
             x, y = move
-            x0 = y * (self.canvas_width / self.game.board.get_size())
-            y0 = x * (self.canvas_height / self.game.board.get_size())
-            x1 = (y + 1) * (self.canvas_width / self.game.board.get_size())
-            y1 = (x + 1) * (self.canvas_height / self.game.board.get_size())
+            x0 = y * (self.canvas_width / board_size)
+            y0 = x * (self.canvas_height / board_size)
+            x1 = (y + 1) * (self.canvas_width / board_size)
+            y1 = (x + 1) * (self.canvas_height / board_size)
             # draw le move possible
             self.canvas.create_rectangle(
                 x0, y0, x1, y1, tags="prev")
