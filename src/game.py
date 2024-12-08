@@ -214,25 +214,11 @@ class Game:
         méthode : vérifie si un player a gagné la game 
         return True/False si un player a gagné ou non
         """
-        board = self.board.get_board()
-        size = self.board.get_size()
-        pieces_player_1 = 0
-        pieces_player_2 = 0
-
-        # permet de compter le number de pieces restants pour chaque player
-        for i in range(size):
-            for j in range(size):
-                piece, player = board[i][j]
-                if piece is not None:
-                    if player == 0:
-                        pieces_player_1 += 1
-                    else:
-                        pieces_player_2 += 1
 
         # règles de win
-        if pieces_player_1 < 3:
+        if self.players[0].get_towers_remains() < 3:
             return True
-        elif pieces_player_2 < 3:
+        elif self.players[1].get_towers_remains() < 3:
             return True
         return False
 
