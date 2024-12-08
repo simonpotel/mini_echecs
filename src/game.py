@@ -97,7 +97,7 @@ class Game:
             return True
         else:
             # le move n'est pas correct
-            self.render.label_instruction.config(text="Mouvement incorrect")
+            self.render.label_instruction.config(text="Incorrect move")
             return False
 
     def event_click_piece(self, i, j):
@@ -146,13 +146,13 @@ class Game:
                 # on remplace l'ancienne selection par la nouvelle
                 match case[0]:
                     case 1:  # queen
-                        piece_type_msg = "votre queen"
+                        piece_type_msg = "your queen"
                         self.players[self.round_player[0]
                                      ].set_coords_queen((i, j))
                     case 2:  # tower
-                        piece_type_msg = "une tower"
+                        piece_type_msg = "a tower"
 
-                self.render.label_instruction.config(text=f"You have selected the piece {
+                self.render.label_instruction.config(text=f"You have selected {
                     piece_type_msg} ({i}, {j})")
                 self.round_player[1] = (i, j)
 

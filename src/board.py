@@ -27,7 +27,8 @@ class Board:
         procédure qui initialise le board de game avec les pieces de chaque player
         et set les coordonnées de la queen et le number de towers restants pour chaque player (par défaut en début de game)
         """
-        pieces_number = (self.size**2)//4-1  # number forcément impair
+        #pieces_number = (self.size**2)//4-1  # number forcément impair
+        
         # placement initial des towers
         # number de pieces par ligne et number de lines
         number_pieces_lines = self.size//2
