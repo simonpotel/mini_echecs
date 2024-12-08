@@ -23,6 +23,9 @@ class Render:
         self.root.geometry("800x800")  # size de la fenêtre
         self.canvas_width = 600  # height du board
         self.canvas_height = 600  # width du board
+        self.label_game_name = tk.Label(self.root, text=f'Game: {self.game.game_name}', font=(
+            "Roboto, 20"))
+        self.label_game_name.pack(pady=(10, 0))  # margin top 10
         self.label_instruction = tk.Label(self.root, text="Your turn to play :", font=(
             "Roboto, 15"))  # label tkinter instruction de game
         self.label_instruction.pack(pady=(10, 0))  # margin top 10
