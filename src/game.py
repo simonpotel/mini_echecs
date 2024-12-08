@@ -26,6 +26,7 @@ class Game:
         self.bot_game = bot_game
         self.bot = None if not bot_game else Bot(game=self)
         self.game_name = game_name
+        self.play_sounds = True 
         self.sounds = Sounds()
 
     def is_correct_move(self, start, end):
@@ -119,7 +120,7 @@ class Game:
 
                 # conditions de sorties des pions adverses
                 if not self.handle_captures(i, j): # si il n'y a pas eu de capture
-                    self.sounds.play_sound('sucess') # jouer le son de succès
+                    if self.play_sounds.get(): self.sounds.play_sound('sucess') # jouer le son de succès
 
 
                 if self.check_win():  # vérifier si un player a gagné
@@ -157,7 +158,7 @@ class Game:
 
                 self.render.show_player_selection(i, j)
                 self.save_game()
-                self.sounds.play_sound('select')
+                if self.play_sounds.get(): self.sounds.play_sound('select')
                 return
 
         # réinitialiser la case selectionnée pour le prochain player
@@ -193,7 +194,7 @@ class Game:
                         board[x][y] = (None, None)
                         captured = True
         if captured:
-            self.sounds.play_sound('loss')
+            if self.play_sounds.get(): self.sounds.play_sound('loss')
             return True 
         return False 
 
@@ -275,5 +276,5 @@ class Game:
         procédure : lance le game et met à jour le game tkinter
         """
         self.render = Render(self)  # render graphique Tkinter du game
-        self.sounds.play_sound('sucess')
+        if self.play_sounds.get(): self.sounds.play_sound('sucess')
         self.render.root.mainloop()  # lancer le game

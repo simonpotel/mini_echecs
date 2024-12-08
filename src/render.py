@@ -36,6 +36,10 @@ class Render:
             # canvas tkinter pour draw le board
             self.root, width=self.canvas_width, height=self.canvas_height)
         self.canvas.pack(pady=(10, 0))  # margin top 10
+        self.game.play_sounds = tk.BooleanVar(value=True)
+        self.checkbox_playsound = tk.Checkbutton(
+            self.root, text="Play Sounds", variable=self.game.play_sounds)
+        self.checkbox_playsound.pack(pady=(0, 10))
         self.load_images()
         self.draw_game()  # dessine le board
 
