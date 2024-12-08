@@ -217,9 +217,9 @@ class Game:
         """
 
         # règles de win
-        if self.players[0].get_towers_remains() < 3:
+        if self.players[0].get_towers_remains() <= 1:
             return True
-        elif self.players[1].get_towers_remains() < 3:
+        elif self.players[1].get_towers_remains() <= 1:
             return True
         return False
 
