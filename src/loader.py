@@ -77,7 +77,7 @@ class Loader:
             if not game_name:
                 messagebox.showerror("Error", "Please enter a game name.")
                 return
-            if game_name in self.get_saved_games() or (6 <= size_board <= 12):
+            if game_name in self.get_saved_games() or (6 <= size_board <= 12 and size_board % 2 == 0):
                 self.root.destroy()
                 game = Game(size_board, bot_game, game_name)
                 if game_name in self.get_saved_games():
@@ -86,7 +86,7 @@ class Loader:
                 self.ask_replay()
             else:
                 messagebox.showerror(
-                    "Error", "Board size must be between 6 and 12.")
+                    "Error", "Board size must be between 6 and 12 and even.")
         except ValueError:
             messagebox.showerror("Error", "Please enter a correct number.")
 
